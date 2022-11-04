@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/usr/src/app"
+    ports:
+      - "4000:4000"
+    command: npm run dev
+    environment:
+      - MONGO_URL=mongodb://mongo/mydbanddocker
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017-27017"
