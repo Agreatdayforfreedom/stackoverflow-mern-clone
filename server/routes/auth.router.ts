@@ -15,7 +15,9 @@ authRouter.post("/login", async (request: Request, response: Response) => {
       return HttpException("complete the fields", 400, response);
 
     // find by any the user chooses: username or email;
-    const [user] = await UserModel.find({ findBy }).exec();
+    const [user] = await UserModel.find({
+      $or: [{ username: findBy }, { email: findBy }],
+    }).exec();
     if (!(await user.comparePassword(password)))
       return HttpException(
         "Incorrect email/username or password",
@@ -40,10 +42,11 @@ authRouter.post("/signup", async (request: Request, response: Response) => {
     if (!username || !password || !email)
       return HttpException("all fields are required", 400, response);
 
-    const [userNameExists] = await UserModel.find({ username }).exec();
-    const [emailExists] = await UserModel.find({ email }).exec();
+    const [userExists] = await UserModel.find({
+      $or: [{ username }, { email }],
+    }).exec();
 
-    if (userNameExists || emailExists)
+    if (userExists)
       return HttpException("Username or email already exists", 400, response);
 
     const user = await UserModel.create({

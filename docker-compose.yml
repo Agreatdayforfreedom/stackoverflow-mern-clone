@@ -11,7 +11,7 @@ services:
       - "4000:4000"
     command: npm run dev
     environment:
-      - MONGO_URL=mongodb://mongo/mydbanddocker
+      - MONGO_URL=mongodb://mongo/heapoverflow
     depends_on:
       - mongo
 
