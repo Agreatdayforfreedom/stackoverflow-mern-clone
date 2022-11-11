@@ -12,9 +12,26 @@ export const loginThunk = createAsyncThunk(
       localStorage.setItem("token", data.access_token);
       return data.user;
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(error);
-        // rejectWithValue(error.response?.data.message)
+      if (error instanceof AxiosError && error.response) {
+        return rejectWithValue(error.response.data.err);
+      }
+    }
+  }
+);
+
+export const signupThunk = createAsyncThunk(
+  "auth/signup",
+  async (payload: any, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4000/api/auth/signup",
+        payload
+      );
+      localStorage.setItem("token", data.access_token);
+      return data.user;
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+        return rejectWithValue(error.response.data.err);
       }
     }
   }

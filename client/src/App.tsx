@@ -1,19 +1,24 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HeaderLayout from "./layouts/HeaderLayout";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import Header from "./components/Header";
+import { authThunk } from "./features/auth/authApi";
+import MainLayout from "./layouts/MainLayout";
+import Home from "./pages/Home";
 // import Some from "./features/auth/Some";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import { getToken } from "./utils/getToken";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HeaderLayout />}>
+        <Route path="/" element={<MainLayout />}>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route index element={<Home />} />
         </Route>
-        {/* <Some /> */}
       </Routes>
     </BrowserRouter>
   );
