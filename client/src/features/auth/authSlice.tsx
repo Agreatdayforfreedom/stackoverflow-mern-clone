@@ -20,14 +20,13 @@ interface AuthState {
 
 const token: string = localStorage.getItem("token") as string | "";
 
-// Define the initial state using that type
 const initialState: AuthState = {
   user: undefined,
   token,
   loading: true,
   error: undefined,
 };
-//TODO: validate username or email from back and there is a error in 'comparePassword'
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,

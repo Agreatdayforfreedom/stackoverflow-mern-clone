@@ -29,7 +29,7 @@ const Login = () => {
 
     dispatch(loginThunk({ findBy, password }));
   };
-  if (loading) return <p>loading</p>;
+  if (loading) return <></>;
   if (user) return <Navigate to="/" />;
   return (
     <main className="flex items-center justify-center h-screen">
@@ -84,7 +84,9 @@ const Login = () => {
             Log in
           </button>
           {error && (
-            <p className="text-sm text-red-700 font-bold py-5">{error}</p>
+            <div className="text-center">
+              <p className="text-sm text-red-700 font-bold py-5">{error}</p>
+            </div>
           )}
         </form>
         <p className="text-sm mt-7">

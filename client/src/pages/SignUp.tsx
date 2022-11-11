@@ -1,9 +1,9 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { FaCubes } from "react-icons/fa";
 import { Link, Navigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { signupThunk } from "../features/auth/authApi";
-import { showError } from "../features/auth/authSlice";
+import { hideError, showError } from "../features/auth/authSlice";
 
 const SignUp = () => {
   const { user, loading, error } = useAppSelector((state) => state.auth);
@@ -13,6 +13,14 @@ const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        dispatch(hideError());
+      }, 4000);
+    }
+  }, [error]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,7 +97,9 @@ const SignUp = () => {
               Sign Up
             </button>
             {error && (
-              <p className="text-sm text-red-700 font-bold py-5">{error}</p>
+              <div className="text-center">
+                <p className="text-sm text-red-700 font-bold py-5">{error}</p>
+              </div>
             )}
           </form>
           <p className="text-sm mt-7">

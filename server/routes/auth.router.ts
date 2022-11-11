@@ -1,6 +1,5 @@
 import { Request, Response, Router } from "express";
 import HttpException from "../exceptions/http.exception";
-import { User } from "../interfaces/interfaces";
 import checkAuth from "../middlewares/checkAuth";
 import UserModel from "../models/User.model";
 import genJwt from "../utils/genJwt";
@@ -18,10 +17,19 @@ authRouter.post("/login", async (request: Request, response: Response) => {
     const [user] = await UserModel.find({
       $or: [{ username: findBy }, { email: findBy }],
     }).exec();
+
+    if (!user) {
+      return HttpException(
+        "Incorrect email/username or password",
+        400,
+        response
+      );
+    }
+
     if (!(await user.comparePassword(password)))
       return HttpException(
         "Incorrect email/username or password",
-        401,
+        400,
         response
       );
 

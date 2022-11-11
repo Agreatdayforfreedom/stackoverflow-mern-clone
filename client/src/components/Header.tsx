@@ -8,7 +8,7 @@ const Header = () => {
   const dispatch = useAppDispatch();
   const { user, loading } = useAppSelector((state) => state.auth);
 
-  if (loading) return <p>loading</p>;
+  if (loading) return <></>;
   return (
     <header className=" bg-white flex justify-between items-center shadow-lg fixed top-0 w-full">
       <div className="flex p-2 mx-3 items-center">
