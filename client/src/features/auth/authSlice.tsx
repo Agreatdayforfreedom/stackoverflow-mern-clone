@@ -1,7 +1,4 @@
-import { AnyAction } from "redux";
-import axios from "axios";
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState } from "../../app/store";
 import { authThunk, loginThunk, signupThunk } from "./authApi";
 
 interface User {
