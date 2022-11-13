@@ -13,6 +13,7 @@ import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 // import Some from "./features/auth/Some";
 import Login from "./pages/Login";
+import Question from "./pages/Question";
 import SignUp from "./pages/SignUp";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/" element={<LeftSideBar />}>
             <Route index element={<Home />} />
+            <Route path="/questions/:id" element={<Question />} />
           </Route>
         </Route>
       </Routes>

@@ -13,6 +13,8 @@ dotenv.config();
 app.use(cors());
 app.use(express.json());
 
+// query1();
+
 //routes
 app.use("/api/auth", authRouter);
 app.use("/api/question", questionRouter);
