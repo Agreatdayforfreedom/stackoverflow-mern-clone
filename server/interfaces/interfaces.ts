@@ -5,6 +5,7 @@ export interface User {
   username: string;
   password: string;
   email: string;
+  reputation: number;
 }
 
 export interface Question {

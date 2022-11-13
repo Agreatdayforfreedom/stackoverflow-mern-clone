@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import questionRouter from "./routes/question.router";
 import answerRouter from "./routes/answer.router";
 import cors from "cors";
+import voteRouter from "./routes/vote.router";
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/question", questionRouter);
 app.use("/api/answer", answerRouter);
+app.use("/api/vote", voteRouter);
 
 export default app;

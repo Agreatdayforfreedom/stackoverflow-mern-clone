@@ -3,10 +3,11 @@ import HttpException from "../exceptions/http.exception";
 import { Comment } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import QuestionModel from "../models/Question.model";
+import VotesModel from "../models/Votes.model";
 
 export const getQuestions = async (request: Request, response: Response) => {
   try {
-    const questions = await QuestionModel.find();
+    const questions = await QuestionModel.find().populate("votes");
     response.json(questions);
   } catch (error) {
     console.log(error);
