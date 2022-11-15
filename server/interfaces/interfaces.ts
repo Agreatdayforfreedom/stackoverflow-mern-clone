@@ -5,13 +5,20 @@ export interface User {
   username: string;
   password: string;
   email: string;
+  avatar: string;
   reputation: number;
+}
+
+export interface Tag {
+  _id: Types.ObjectId;
+  name: string;
+  infoTag: string;
 }
 
 export interface Question {
   title: string;
   content: string;
-  tags: Types.Array<string>;
+  tags: Types.Array<Tag>;
   comments: Types.DocumentArray<Comment>;
   owner: Types.ObjectId; //user
 }

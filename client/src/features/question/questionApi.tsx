@@ -25,3 +25,15 @@ export const getQuestionThunk = createAsyncThunk(
     }
   }
 );
+
+// export const createCommentThunk = createAsyncThunk(
+//   "question/getQuestion",
+//   async (id: string, { rejectWithValue }) => {
+//     try {
+//       const { data } = await axios(`http://localhost:4000/api/question/${id}`);
+//       return data;
+//     } catch (error) {
+//       return rejectWithValue("error");
+//     }
+//   }
+// );

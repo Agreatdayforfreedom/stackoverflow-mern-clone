@@ -1,13 +1,16 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 import HttpException from "../exceptions/http.exception";
-import { Comment } from "../interfaces/interfaces";
+import { Comment, Tag } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import QuestionModel from "../models/Question.model";
-import VotesModel from "../models/Votes.model";
+import TagModel from "../models/Tag.model";
 
 export const getQuestions = async (request: Request, response: Response) => {
   try {
-    const questions = await QuestionModel.find().populate("votes");
+    const questions = await QuestionModel.find()
+      .populate("votes")
+      .populate("tags");
     response.json(questions);
   } catch (error) {
     console.log(error);
@@ -18,11 +21,13 @@ export const getQuestion = async (request: Request, response: Response) => {
   try {
     const question = await QuestionModel.findOne({
       _id: request.params.id,
-    }).populate({
-      path: "comments.owner",
-      select: "-password",
-      model: "User",
-    });
+    })
+      .populate({
+        path: "comments.owner",
+        select: "-password",
+        model: "User",
+      })
+      .populate("tags");
     return response.json(question);
   } catch (error) {
     console.log(error);
@@ -35,7 +40,11 @@ export const newQuestion = async (request: Request, response: Response) => {
       title: request.body.title,
       content: request.body.content,
     });
-    question.tags.push(...request.body.tags);
+
+    const tags = await createTag(request.body.tags);
+
+    console.log(tags);
+    question.tags.push(...tags);
     question.owner = request.user._id;
 
     await question.save();
@@ -43,6 +52,35 @@ export const newQuestion = async (request: Request, response: Response) => {
     console.log(error);
   }
 };
+
+async function createTag(tags: string[]) {
+  const tagExists = await TagModel.find({
+    name: [...tags],
+  });
+
+  const tagsExistNames = tagExists.map((t: any) => t.name);
+  let intersection = tags.filter((x: string) => !tagsExistNames.includes(x));
+
+  let tagsIds: Types.ObjectId[] = [];
+  let newTagIds: Types.ObjectId[] = [];
+
+  if (tagExists) {
+    let tagIds = tagExists.map((t: Tag) => t._id);
+    tagsIds = tagIds;
+  }
+
+  if (intersection.length > 0) {
+    newTagIds = await Promise.all(
+      intersection.map(async (tag) => {
+        const tags = await TagModel.create({
+          name: tag,
+        });
+        return tags._id;
+      })
+    );
+  }
+  return tagsIds.concat(newTagIds);
+}
 
 export const updateQuestion = async (request: Request, response: Response) => {
   const { title, content, tags } = request.body;

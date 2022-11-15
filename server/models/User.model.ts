@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema<User, UserModel, UserMethods>(
     password: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true },
     reputation: { type: Number, default: 1 },
+    avatar: {
+      type: String,
+      default: function () {
+        return `https://secure.gravatar.com/avatar/${this._id}?s=90&d=identicon`;
+      },
+    },
   },
   {
     timestamps: true,

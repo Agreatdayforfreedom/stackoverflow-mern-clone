@@ -56,7 +56,6 @@ export const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(loginThunk.rejected, (state, action) => {
-        console.log(action.payload);
         state.error = action.payload as string;
         state.loading = false;
       });

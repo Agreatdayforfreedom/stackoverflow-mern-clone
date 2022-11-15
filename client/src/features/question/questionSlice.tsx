@@ -1,17 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Question } from "../../interfaces/interfaces";
-import { getQuestionsThunk, getQuestionThunk } from "./quesionApi";
+import { getQuestionsThunk, getQuestionThunk } from "./questionApi";
 
 interface InitialState {
   questions: Question[] | [];
-  question: Question | {};
+  question: Question | undefined;
   loading: boolean;
   error: undefined | string;
 }
 
-const initialState: any = {
+const initialState: InitialState = {
   questions: [],
-  question: {},
+  question: undefined,
   loading: true,
   error: undefined,
 };
@@ -35,7 +35,6 @@ export const questionSlice = createSlice({
       })
       .addCase(getQuestionThunk.fulfilled, (state, action) => {
         state.loading = false;
-        // console.log(action.payload);
         state.question = action.payload;
       });
   },

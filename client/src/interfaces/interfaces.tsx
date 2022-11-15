@@ -2,6 +2,7 @@ export interface User {
   _id: string;
   username: string;
   email: string;
+  avatar: string;
   reputation: number;
   createdAt: Date;
   updatedAt: Date;
@@ -9,12 +10,13 @@ export interface User {
 
 export interface Question {
   _id: string;
-
   title: string;
   content: string;
-  tags: Array<string>;
+  tags: Array<Tag>;
   comments: Array<Comment>;
   owner: User; //user
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Answer {
@@ -23,13 +25,27 @@ export interface Answer {
   content: string;
   question: Question;
   owner: User;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Comment {
   content: string;
   owner: User;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type Tag = {
-  tag: string;
-};
+export interface Config {
+  headers: {
+    "Content-Type": string;
+    Authorization: string;
+  };
+}
+
+export interface Tag {
+  name: string;
+  infoTag: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

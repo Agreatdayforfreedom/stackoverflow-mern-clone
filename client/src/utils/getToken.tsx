@@ -1,11 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
-export interface Config {
-  headers: {
-    "Content-Type": string;
-    Authorization: string;
-  };
-}
+import { Config } from "../interfaces/interfaces";
 
 export const getToken = (token: string): Config => {
   return {

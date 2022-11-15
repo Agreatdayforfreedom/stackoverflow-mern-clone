@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Tag from "../components/Tag";
-import { getQuestionsThunk } from "../features/question/quesionApi";
+import { getQuestionsThunk } from "../features/question/questionApi";
 import { Question, Tag as ITag } from "../interfaces/interfaces";
 
 const Home = () => {
@@ -43,7 +43,7 @@ const Home = () => {
               </div>
               <div className="flex flex-col sm:flex-row w-full">
                 <div className="flex px-3 w-full ">
-                  {q.tags.map((tag) => (
+                  {q.tags.map((tag: ITag) => (
                     <Tag key={nanoid()} tag={tag} />
                   ))}
                 </div>

@@ -1,26 +1,33 @@
 import { nanoid } from "@reduxjs/toolkit";
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { FormEvent, useEffect, useState } from "react";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import Button from "../components/Button";
 import CardUserInfo from "../components/CardUserInfo";
+import CommentSection from "../components/CommentSection";
 import Tag from "../components/Tag";
 import Voting from "../components/Voting";
-import { getQuestionThunk } from "../features/question/quesionApi";
-import { Tag as ITag } from "../interfaces/interfaces";
+import { createCommentThunk } from "../features/comment/commentsApi";
+import { getQuestionThunk } from "../features/question/questionApi";
+import {
+  Tag as ITag,
+  Comment as IComment,
+  Question as IQuestion,
+} from "../interfaces/interfaces";
+import { getToken } from "../utils/getToken";
 
 const Question = () => {
   const { question, loading } = useAppSelector((state) => state.question);
+
   const dispatch = useAppDispatch();
   const params = useParams();
   useEffect(() => {
     if (params.id) {
       dispatch(getQuestionThunk(params.id));
     }
-    console.log(question);
   }, []);
-  if (loading) return <p>loading</p>;
 
-  //todo: fetch votes
+  if (loading || !question) return <p>loading</p>;
   return (
     <section className="p-4 w-full">
       {/* header */}
@@ -43,9 +50,10 @@ const Question = () => {
         <div className="w-full p-4">
           <p className="break-all">{question.content}</p>
           <div className="flex my-5">
-            {question.tags.map((tag: string) => (
-              <Tag key={nanoid()} tag={tag} />
-            ))}
+            {question &&
+              question.tags.map((tag: ITag) => (
+                <Tag key={nanoid()} tag={tag} />
+              ))}
           </div>
           <div className="flex justify-between">
             <div className="flex">
@@ -62,8 +70,9 @@ const Question = () => {
                 Flag
               </p>
             </div>
-            <CardUserInfo user={question.owner} question={true} />
+            <CardUserInfo user={question.owner} question={question} />
           </div>
+          <CommentSection question={question} />
         </div>
       </div>
     </section>
