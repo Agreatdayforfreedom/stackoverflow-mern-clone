@@ -26,6 +26,39 @@ export const getQuestionThunk = createAsyncThunk(
   }
 );
 
+export const createQuestionThunk = createAsyncThunk(
+  "question/createQuestion",
+  async ({ payload, config }: any, { rejectWithValue }) => {
+    console.log(payload, config, "create");
+    try {
+      const { data } = await axios.post(
+        `http://localhost:4000/api/question/new`,
+        payload,
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue("error");
+    }
+  }
+);
+
+export const editQuestionThunk = createAsyncThunk(
+  "question/editQuestion",
+  async ({ payload, id, config }: any, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        `http://localhost:4000/api/question/update/${id}`,
+        payload,
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue("error");
+    }
+  }
+);
+
 // export const createCommentThunk = createAsyncThunk(
 //   "question/getQuestion",
 //   async (id: string, { rejectWithValue }) => {

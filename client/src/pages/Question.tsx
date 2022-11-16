@@ -2,13 +2,16 @@ import { nanoid } from "@reduxjs/toolkit";
 import { FormEvent, useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import AuthLink from "../components/AuthLink";
 import Button from "../components/Button";
 import CardUserInfo from "../components/CardUserInfo";
 import CommentSection from "../components/CommentSection";
+import { Spinner } from "../components/Spinner";
 import Tag from "../components/Tag";
 import Voting from "../components/Voting";
 import { createCommentThunk } from "../features/comment/commentsApi";
 import { getQuestionThunk } from "../features/question/questionApi";
+import { clearState } from "../features/question/questionSlice";
 import {
   Tag as ITag,
   Comment as IComment,
@@ -18,16 +21,18 @@ import { getToken } from "../utils/getToken";
 
 const Question = () => {
   const { question, loading } = useAppSelector((state) => state.question);
-
   const dispatch = useAppDispatch();
   const params = useParams();
   useEffect(() => {
-    if (params.id) {
-      dispatch(getQuestionThunk(params.id));
-    }
+    // dispatch(clearState());
+    setTimeout(() => {
+      if (params.id && !question) {
+        dispatch(getQuestionThunk(params.id));
+      }
+    }, 200);
   }, []);
 
-  if (loading || !question) return <p>loading</p>;
+  if (loading || !question) return <Spinner />;
   return (
     <section className="p-4 w-full">
       {/* header */}
@@ -60,9 +65,18 @@ const Question = () => {
               <p className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all">
                 Share
               </p>
-              <p className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all">
+              <AuthLink
+                to={`/questions/${question._id}/edit`}
+                name="Edit"
+                className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all"
+              />
+              {/* <Link
+                to={`/questions/${question._id}/edit`}
+                className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all"
+              >
                 Edit
-              </p>
+              </Link> */}
+              "_id" : NumberLong(21),
               <p className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all">
                 Follow
               </p>

@@ -2,11 +2,16 @@ import React from "react";
 
 interface Props {
   name: string;
+  disabled: boolean;
 }
 
-const Button = ({ name }: Props) => {
+const Button = ({ name, disabled }: Props) => {
   return (
-    <button type="submit" className="button primary whitespace-nowrap">
+    <button
+      type="submit"
+      className="button primary whitespace-nowrap"
+      disabled={disabled}
+    >
       {name}
     </button>
   );

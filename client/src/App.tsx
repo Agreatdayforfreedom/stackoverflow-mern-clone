@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from "./app/hooks";
 import Header from "./components/Header";
 import LeftSideBar from "./components/LeftSideBar";
 import MainLayout from "./layouts/MainLayout";
+import AskQuestion from "./pages/AskQuestion";
+import EditQuestion from "./pages/EditQuestion";
 import Home from "./pages/Home";
 // import Some from "./features/auth/Some";
 import Login from "./pages/Login";
@@ -26,7 +28,9 @@ function App() {
           <Route path="/" element={<LeftSideBar />}>
             <Route index element={<Home />} />
             <Route path="/questions/:id" element={<Question />} />
+            <Route path="/questions/:id/edit" element={<EditQuestion />} />
           </Route>
+          <Route path="/questions/ask" element={<AskQuestion />} />
         </Route>
       </Routes>
     </BrowserRouter>

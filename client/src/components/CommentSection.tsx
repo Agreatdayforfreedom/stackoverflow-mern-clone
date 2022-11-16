@@ -27,7 +27,6 @@ const CommentSection = ({ question }: PropsCS) => {
   const dispatch = useAppDispatch();
 
   const config = getToken(token);
-  console.log(user);
   if (loading) return <></>;
 
   return (
@@ -75,7 +74,7 @@ const CommentSection = ({ question }: PropsCS) => {
               className="w-full bg-transparent p-2 border border-slate-300 placeholder:text-sm"
             ></textarea>
             <div className="mx-2">
-              <Button name="Add comment" />
+              <Button name="Add comment" disabled={false} />
             </div>
           </form>
         </div>

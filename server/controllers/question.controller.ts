@@ -9,6 +9,7 @@ import TagModel from "../models/Tag.model";
 export const getQuestions = async (request: Request, response: Response) => {
   try {
     const questions = await QuestionModel.find()
+      .sort([["createdAt", -1]])
       .populate("votes")
       .populate("tags");
     response.json(questions);
@@ -41,7 +42,7 @@ export const newQuestion = async (request: Request, response: Response) => {
       content: request.body.content,
     });
 
-    const tags = await createTag(request.body.tags);
+    const tags = await mergeTag(request.body.tags);
 
     console.log(tags);
     question.tags.push(...tags);
@@ -53,7 +54,7 @@ export const newQuestion = async (request: Request, response: Response) => {
   }
 };
 
-async function createTag(tags: string[]) {
+async function mergeTag(tags: string[]) {
   const tagExists = await TagModel.find({
     name: [...tags],
   });
@@ -92,11 +93,12 @@ export const updateQuestion = async (request: Request, response: Response) => {
     question.title = title || question.title;
     question.content = content || question.content;
 
-    if (request.body.tags) {
-      question.tags.addToSet(...tags);
+    const uniqueTags = await mergeTag(tags);
+    if (uniqueTags) {
+      question.tags.addToSet(...uniqueTags);
     }
-    await question.save();
-    response.sendStatus(204);
+    const questionSaved = await question.save();
+    response.json(questionSaved);
   } catch (error) {
     console.log(error);
   }

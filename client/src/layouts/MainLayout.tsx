@@ -21,10 +21,7 @@ const MainLayout = () => {
 
   return (
     <div>
-      <div>
-        <Header />
-        <p>no scroll</p>
-      </div>
+      <Header />;
       <Outlet />
     </div>
   );
