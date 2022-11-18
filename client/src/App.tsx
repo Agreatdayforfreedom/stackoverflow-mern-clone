@@ -11,6 +11,7 @@ import Header from "./components/Header";
 import LeftSideBar from "./components/LeftSideBar";
 import MainLayout from "./layouts/MainLayout";
 import AskQuestion from "./pages/AskQuestion";
+import EditAnswer from "./pages/EditAnswer";
 import EditQuestion from "./pages/EditQuestion";
 import Home from "./pages/Home";
 // import Some from "./features/auth/Some";
@@ -29,6 +30,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="/questions/:id" element={<Question />} />
             <Route path="/questions/:id/edit" element={<EditQuestion />} />
+            <Route path="/answer/:id/edit" element={<EditAnswer />} />
           </Route>
           <Route path="/questions/ask" element={<AskQuestion />} />
         </Route>

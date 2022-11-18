@@ -1,38 +1,54 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { FormEvent, useEffect, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import Answers from "../components/Answers";
 import AuthLink from "../components/AuthLink";
-import Button from "../components/Button";
 import CardUserInfo from "../components/CardUserInfo";
 import CommentSection from "../components/CommentSection";
 import { Spinner } from "../components/Spinner";
 import Tag from "../components/Tag";
 import Voting from "../components/Voting";
-import { createCommentThunk } from "../features/comment/commentsApi";
-import { getQuestionThunk } from "../features/question/questionApi";
-import { clearState } from "../features/question/questionSlice";
 import {
-  Tag as ITag,
-  Comment as IComment,
-  Question as IQuestion,
-} from "../interfaces/interfaces";
-import { getToken } from "../utils/getToken";
+  getQuestionThunk,
+  removeQuestionThunk,
+} from "../features/question/questionApi";
+import { clearState } from "../features/question/questionSlice";
+import { Tag as ITag } from "../interfaces/interfaces";
+import { configAxios } from "../utils/configAxios";
 
 const Question = () => {
-  const { question, loading } = useAppSelector((state) => state.question);
+  const { question, loading, token } = useAppSelector(
+    (state) => state.question
+  );
+  const { user, loading: loadingAuth } = useAppSelector((state) => state.auth);
+
+  const config = configAxios(token);
+
   const dispatch = useAppDispatch();
   const params = useParams();
+
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // dispatch(clearState());
+    dispatch(clearState());
     setTimeout(() => {
-      if (params.id && !question) {
+      if (params.id) {
         dispatch(getQuestionThunk(params.id));
       }
     }, 200);
   }, []);
 
-  if (loading || !question) return <Spinner />;
+  const handleRemove = () => {
+    if (params.id) {
+      dispatch(removeQuestionThunk({ id: params.id, config }));
+      if (!loading) {
+        navigate(`/`);
+      }
+    }
+  };
+
+  if (loading || !question || loadingAuth || !user) return <Spinner />;
   return (
     <section className="p-4 w-full">
       {/* header */}
@@ -51,7 +67,7 @@ const Question = () => {
         </div>
       </div>
       <div className="flex w-full">
-        <Voting vote={10} />
+        <Voting id={question._id} />
         <div className="w-full p-4">
           <p className="break-all">{question.content}</p>
           <div className="flex my-5">
@@ -70,25 +86,28 @@ const Question = () => {
                 name="Edit"
                 className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all"
               />
-              {/* <Link
-                to={`/questions/${question._id}/edit`}
-                className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all"
-              >
-                Edit
-              </Link> */}
-              "_id" : NumberLong(21),
-              <p className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all">
-                Follow
-              </p>
+              {question.owner._id.toString() === user._id ? (
+                <button
+                  onClick={handleRemove}
+                  className="text-sm flex items-start text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all"
+                >
+                  Delete
+                </button>
+              ) : (
+                <p className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all">
+                  Follow
+                </p>
+              )}
               <p className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all">
                 Flag
               </p>
             </div>
-            <CardUserInfo user={question.owner} question={question} />
+            <CardUserInfo user={question.owner} from={question} />
           </div>
-          <CommentSection question={question} />
+          <CommentSection from={question} />
         </div>
       </div>
+      <Answers />
     </section>
   );
 };

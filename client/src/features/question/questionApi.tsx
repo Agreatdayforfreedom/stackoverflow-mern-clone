@@ -1,11 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { Config, Question } from "../../interfaces/interfaces";
+
+interface Payload {
+  id?: string;
+  payload?: {
+    tags: string[];
+    title: string;
+    content: string;
+  };
+  config: Config;
+}
 
 export const getQuestionsThunk = createAsyncThunk(
   "question/getQuestions",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios("http://localhost:4000/api/question");
+      const { data } = await axios(
+        `${import.meta.env.VITE_BACKEND_URL}/question`
+      );
 
       return data;
     } catch (error) {
@@ -18,7 +31,9 @@ export const getQuestionThunk = createAsyncThunk(
   "question/getQuestion",
   async (id: string, { rejectWithValue }) => {
     try {
-      const { data } = await axios(`http://localhost:4000/api/question/${id}`);
+      const { data } = await axios(
+        `${import.meta.env.VITE_BACKEND_URL}/question/${id}`
+      );
       return data;
     } catch (error) {
       return rejectWithValue("error");
@@ -28,11 +43,10 @@ export const getQuestionThunk = createAsyncThunk(
 
 export const createQuestionThunk = createAsyncThunk(
   "question/createQuestion",
-  async ({ payload, config }: any, { rejectWithValue }) => {
-    console.log(payload, config, "create");
+  async ({ payload, config }: Payload, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:4000/api/question/new`,
+        `${import.meta.env.VITE_BACKEND_URL}/question/new`,
         payload,
         config
       );
@@ -45,10 +59,10 @@ export const createQuestionThunk = createAsyncThunk(
 
 export const editQuestionThunk = createAsyncThunk(
   "question/editQuestion",
-  async ({ payload, id, config }: any, { rejectWithValue }) => {
+  async ({ payload, id, config }: Payload, { rejectWithValue }) => {
     try {
       const { data } = await axios.put(
-        `http://localhost:4000/api/question/update/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/question/update/${id}`,
         payload,
         config
       );
@@ -59,14 +73,17 @@ export const editQuestionThunk = createAsyncThunk(
   }
 );
 
-// export const createCommentThunk = createAsyncThunk(
-//   "question/getQuestion",
-//   async (id: string, { rejectWithValue }) => {
-//     try {
-//       const { data } = await axios(`http://localhost:4000/api/question/${id}`);
-//       return data;
-//     } catch (error) {
-//       return rejectWithValue("error");
-//     }
-//   }
-// );
+export const removeQuestionThunk = createAsyncThunk(
+  "question/removeQuestion",
+  async ({ id, config }: Payload, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/question/delete/${id}`,
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue("error");
+    }
+  }
+);

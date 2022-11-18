@@ -62,11 +62,11 @@ async function mergeTag(tags: string[]) {
   const tagsExistNames = tagExists.map((t: any) => t.name);
   let intersection = tags.filter((x: string) => !tagsExistNames.includes(x));
 
-  let tagsIds: Types.ObjectId[] = [];
-  let newTagIds: Types.ObjectId[] = [];
+  let tagsIds: string[] = [];
+  let newTagIds: string[] = [];
 
   if (tagExists) {
-    let tagIds = tagExists.map((t: Tag) => t._id);
+    let tagIds = tagExists.map((t: Tag) => t._id.toString());
     tagsIds = tagIds;
   }
 
@@ -76,7 +76,7 @@ async function mergeTag(tags: string[]) {
         const tags = await TagModel.create({
           name: tag,
         });
-        return tags._id;
+        return tags._id.toString();
       })
     );
   }
@@ -94,8 +94,25 @@ export const updateQuestion = async (request: Request, response: Response) => {
     question.content = content || question.content;
 
     const uniqueTags = await mergeTag(tags);
+    const questionTagIds = question.tags.map((x) => x._id.toString());
+
+    const tagToRemove = questionTagIds.filter(
+      (x) => uniqueTags.indexOf(x) == -1
+    );
+    const newTag = uniqueTags.filter((x) => questionTagIds.indexOf(x) == -1);
+
+    if (tagToRemove.length >= 1) {
+      await QuestionModel.updateOne(
+        { _id: question._id },
+        { $pull: { tags: { $in: [...tagToRemove] } } }
+      );
+    }
+
     if (uniqueTags) {
-      question.tags.addToSet(...uniqueTags);
+      await QuestionModel.updateOne(
+        { _id: question._id },
+        { $addToSet: { tags: { $each: [...newTag] } } }
+      );
     }
     const questionSaved = await question.save();
     response.json(questionSaved);

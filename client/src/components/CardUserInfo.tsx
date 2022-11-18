@@ -1,16 +1,18 @@
 import React from "react";
-import { Question, User } from "../interfaces/interfaces";
+import { Answer, Question, User } from "../interfaces/interfaces";
 import { formatDate } from "../utils/formatDate";
 
 interface Props {
   user: User;
-  question: Question;
+  from: Question | Answer;
 }
 
-const CardUserInfo = ({ user, question }: Props) => {
+const CardUserInfo = ({ user, from }: Props) => {
   return (
-    <div className={`w-48 ${question && "bg-blue-200 px-2 py-1 rounded"}`}>
-      <p className="text-xs text-slate-600">{formatDate(question.createdAt)}</p>
+    <div
+      className={`w-48 ${"title" in from && "bg-blue-200 px-2 py-1 rounded"}`}
+    >
+      <p className="text-xs text-slate-600">{formatDate(from.createdAt)}</p>
       <div className="flex ">
         <img
           src={user.avatar}

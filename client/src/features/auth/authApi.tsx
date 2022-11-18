@@ -1,12 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
+import { Config } from "../../interfaces/interfaces";
+
+interface PayloadLogin {
+  findBy: string;
+  password: string;
+}
+
+interface PayloadSignup {
+  username: string;
+  email: string;
+  password: string;
+}
 
 export const loginThunk = createAsyncThunk(
   "auth/login",
-  async (payload: any, { rejectWithValue }) => {
+  async (payload: PayloadLogin, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/auth/login",
+        `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
         payload
       );
       localStorage.setItem("token", data.access_token);
@@ -21,10 +33,10 @@ export const loginThunk = createAsyncThunk(
 
 export const signupThunk = createAsyncThunk(
   "auth/signup",
-  async (payload: any, { rejectWithValue }) => {
+  async (payload: PayloadSignup, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/auth/signup",
+        `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
         payload
       );
       localStorage.setItem("token", data.access_token);
@@ -37,10 +49,13 @@ export const signupThunk = createAsyncThunk(
   }
 );
 
-export const authThunk = createAsyncThunk("auth/auth", async (config: any) => {
-  const { data } = await axios(
-    "http://localhost:4000/api/auth/profile",
-    config
-  );
-  return data;
-});
+export const authThunk = createAsyncThunk(
+  "auth/auth",
+  async (config: Config) => {
+    const { data } = await axios(
+      `${import.meta.env.VITE_BACKEND_URL}/auth/profile`,
+      config
+    );
+    return data;
+  }
+);

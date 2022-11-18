@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { authThunk, loginThunk, signupThunk } from "./authApi";
 
 interface User {
+  _id: string;
   username: string;
   email: string;
   createdAt: string;

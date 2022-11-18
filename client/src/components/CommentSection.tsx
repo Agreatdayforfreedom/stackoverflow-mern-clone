@@ -6,33 +6,35 @@ import { createCommentThunk } from "../features/comment/commentsApi";
 import { formatDate } from "../utils/formatDate";
 import Button from "./Button";
 import {
+  Answer,
   Comment as IComment,
   Question as IQuestion,
+  User,
 } from "../interfaces/interfaces";
-import { getToken } from "../utils/getToken";
+import { configAxios } from "../utils/configAxios";
 
 interface PropsComment {
   comment: IComment;
 }
 
 interface PropsCS {
-  question: IQuestion;
+  from: IQuestion | Answer;
 }
 
-const CommentSection = ({ question }: PropsCS) => {
+const CommentSection = ({ from }: PropsCS) => {
   const [toggleComment, setToggleComment] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
   const { user, loading } = useAppSelector((state) => state.auth);
   const { token } = useAppSelector((state) => state.comments);
   const dispatch = useAppDispatch();
 
-  const config = getToken(token);
+  const config = configAxios(token);
   if (loading) return <></>;
 
   return (
     <>
       <div className="mt-5">
-        {question.comments.map((comment: IComment) => (
+        {from.comments.map((comment: IComment) => (
           <Comment key={nanoid()} comment={comment} />
         ))}
 
@@ -59,7 +61,7 @@ const CommentSection = ({ question }: PropsCS) => {
               dispatch(
                 createCommentThunk({
                   content: comment,
-                  id: question._id,
+                  id: from._id,
                   config,
                 })
               );

@@ -36,7 +36,9 @@ voteRouter.post(
         return HttpException("You need at least 15 reputation", 401, response);
       }
       await query(id, request, response, voteEnum.upvote);
+      return response.json(0);
     } catch (error) {
+      console.log(error);
       return HttpException("Internal server error", 500, response);
     }
   }
@@ -60,6 +62,7 @@ voteRouter.post(
       }
 
       await query(id, request, response, voteEnum.downvote);
+      return response.json(0);
     } catch (error) {
       return HttpException("Internal server error", 500, response);
     }

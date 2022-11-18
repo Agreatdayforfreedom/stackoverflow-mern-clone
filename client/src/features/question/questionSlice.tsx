@@ -4,6 +4,7 @@ import {
   editQuestionThunk,
   getQuestionsThunk,
   getQuestionThunk,
+  removeQuestionThunk,
 } from "./questionApi";
 
 interface InitialState {
@@ -30,13 +31,14 @@ export const questionSlice = createSlice({
   reducers: {
     clearState: (state) => {
       state.question = undefined;
-      // state.loading = true;
+      state.loading = true;
       state.error = undefined;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(getQuestionsThunk.pending, (state) => {
+        state.questions = [];
         state.loading = true;
       })
       .addCase(getQuestionsThunk.fulfilled, (state, action) => {
@@ -56,7 +58,15 @@ export const questionSlice = createSlice({
         state.question = undefined;
         state.loading = true;
       })
-      .addCase(editQuestionThunk.fulfilled, (state, action) => {
+      .addCase(editQuestionThunk.fulfilled, (state) => {
+        state.question = undefined;
+        state.loading = false;
+      });
+    builder
+      .addCase(removeQuestionThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeQuestionThunk.fulfilled, (state) => {
         state.question = undefined;
         state.loading = false;
       });

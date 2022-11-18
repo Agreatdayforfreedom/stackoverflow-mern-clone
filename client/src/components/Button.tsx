@@ -2,7 +2,7 @@ import React from "react";
 
 interface Props {
   name: string;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const Button = ({ name, disabled }: Props) => {

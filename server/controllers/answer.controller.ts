@@ -5,9 +5,24 @@ import QuestionModel from "../models/Question.model";
 
 export const getAnswers = async (request: Request, response: Response) => {
   try {
-    const answers = await AnswerModel.find({ question: request.params.id });
+    const answers = await AnswerModel.find({
+      question: request.params.id,
+    }).populate("owner");
     return response.json(answers);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAnswer = async (request: Request, response: Response) => {
+  try {
+    const answers = await AnswerModel.findOne({
+      _id: request.params.id,
+    }).populate("owner");
+    return response.json(answers);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const sendAnswer = async (request: Request, response: Response) => {
@@ -21,10 +36,38 @@ export const sendAnswer = async (request: Request, response: Response) => {
     answer.question = question._id;
     answer.owner = request.user._id;
 
-    const answerSent = await answer.save();
-
-    response.status(201).json(answerSent);
+    const answerCreated = await answer.save();
+    const _answerCreated = await answerCreated.populate("owner", "-password");
+    response.status(201).json(_answerCreated);
   } catch (error) {
     console.log(error);
   }
+};
+
+export const editAnswer = async (request: Request, response: Response) => {
+  const answer = await AnswerModel.findOne({ _id: request.params.id }).populate(
+    "owner"
+  );
+
+  if (!answer) return HttpException("Answer not found", 404, response);
+  if (answer.owner._id.toString() !== request.user._id.toString())
+    return HttpException("Not authorized", 401, response);
+  answer.content = request.body.content || answer.content;
+
+  await answer.save();
+
+  return response.sendStatus(204);
+};
+
+export const deleteAnswer = async (request: Request, response: Response) => {
+  const answer = await AnswerModel.findOne({ _id: request.params.id }).populate(
+    "owner"
+  );
+  if (!answer) return HttpException("Answer not found", 404, response);
+  if (answer.owner._id.toString() !== request.user._id.toString())
+    return HttpException("Not authorized", 401, response);
+
+  const answerDeleted = await AnswerModel.deleteOne({ _id: answer._id });
+
+  return response.json(answerDeleted);
 };

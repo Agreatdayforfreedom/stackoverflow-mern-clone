@@ -21,9 +21,9 @@ export interface Question {
 
 export interface Answer {
   _id: string;
-
   content: string;
   question: Question;
+  comments: Array<Comment>;
   owner: User;
   createdAt: Date;
   updatedAt: Date;
@@ -48,4 +48,10 @@ export interface Tag {
   infoTag: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface Vote {
+  vote: 1 | -1;
+  voter: string;
+  votedTo: string;
 }
