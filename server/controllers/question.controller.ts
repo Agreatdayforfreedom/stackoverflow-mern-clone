@@ -148,19 +148,39 @@ export const deleteQuestion = async (request: Request, response: Response) => {
 
 export const sendComment = async (request: Request, response: Response) => {
   try {
-    console.log(request.params);
     const question = await QuestionModel.findOne({ _id: request.params.id });
 
     const comment: Comment = {
       content: request.body.content,
       owner: request.user._id,
     };
-    if (!question) return HttpException("There was a error", 400, response);
+    if (!question) return HttpException("Question not found", 400, response);
 
     question.comments.push(comment);
     const commentSent = await question.save();
 
     response.json(commentSent);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editComment = async (request: Request, response: Response) => {
+  try {
+    // const question = await QuestionModel.findOneAndUpdate({ _id: request.params.id });
+    // if (!question) return HttpException("Question not found", 400, response);
+
+    const questionEdited = await QuestionModel.findOneAndUpdate(
+      { _id: request.params.id, "comments._id": request.body.commentId },
+      {
+        $set: {
+          "comments.$.content": request.body.content,
+        },
+      },
+      { returnDocument: "after" }
+    );
+    console.log(questionEdited);
+    return response.json(questionEdited);
   } catch (error) {
     console.log(error);
   }

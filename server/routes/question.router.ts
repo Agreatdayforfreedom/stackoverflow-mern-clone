@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   deleteQuestion,
+  editComment,
   getQuestion,
   getQuestions,
   newQuestion,
@@ -17,5 +18,6 @@ questionRouter.post("/new", checkAuth, newQuestion);
 questionRouter.put("/update/:id", checkAuth, updateQuestion);
 questionRouter.delete("/delete/:id", checkAuth, deleteQuestion);
 questionRouter.post("/comment/new/:id", checkAuth, sendComment);
+questionRouter.put("/comment/edit/:id", checkAuth, editComment);
 
 export default questionRouter;

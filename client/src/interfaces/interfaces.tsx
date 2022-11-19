@@ -30,6 +30,7 @@ export interface Answer {
 }
 
 export interface Comment {
+  _id: string;
   content: string;
   owner: User;
   createdAt: Date;

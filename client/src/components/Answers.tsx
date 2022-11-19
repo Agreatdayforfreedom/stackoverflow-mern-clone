@@ -1,5 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit";
-import React, { FormEvent, useEffect } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
@@ -11,9 +11,9 @@ import { useForm } from "../hooks/useForm";
 import { configAxios } from "../utils/configAxios";
 import Answer from "./Answer";
 import Button from "./Button";
-import { Spinner } from "./Spinner";
+
 const Answers = () => {
-  const { answers, loading } = useAppSelector((state) => state.answers);
+  const { answers } = useAppSelector((state) => state.answers);
   const dispatch = useAppDispatch();
   const params = useParams();
 
@@ -22,9 +22,7 @@ const Answers = () => {
       dispatch(getAnswersThunk(params.id));
     }
   }, []);
-  // if (!answers) return <></>;
   const length = answers.length;
-  if (loading) return <Spinner />;
   return (
     <div>
       {length > 0 && (
@@ -42,11 +40,24 @@ const Answers = () => {
 };
 
 const PostAnswer = () => {
+  const [fill, setFill] = useState(true);
+
   const { token } = useAppSelector((state) => state.answers);
-  const { handleChange, form } = useForm<{ content: string }>();
-  const params = useParams();
   const dispatch = useAppDispatch();
+
+  const params = useParams();
+  const { handleChange, form } = useForm<{ content: string }>();
+
   const config = configAxios(token);
+
+  useEffect(() => {
+    console.log(form);
+    if ("content" in form && form.content.trim() !== "") {
+      setFill(false);
+    } else {
+      setFill(true);
+    }
+  }, [form]);
 
   useEffect(() => {
     dispatch(setQuestionId(params.id));
@@ -70,7 +81,7 @@ const PostAnswer = () => {
           onChange={handleChange}
           className="w-full mb-4 bg-transparent rounded border p-2 border-slate-400"
         ></textarea>
-        <Button name="Post your answer" />
+        <Button name="Post your answer" disabled={fill} />
       </form>
     </div>
   );

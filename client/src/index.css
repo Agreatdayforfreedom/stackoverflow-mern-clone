@@ -25,6 +25,11 @@ body {
   background-color: #747070 !important;
 }
 
+.arrow:disabled {
+  color: red !important;
+  background-color: none !important;
+}
+
 .spinner {
   position: relative;
   height: 100vh;

@@ -32,11 +32,9 @@ const Question = () => {
 
   useEffect(() => {
     dispatch(clearState());
-    setTimeout(() => {
-      if (params.id) {
-        dispatch(getQuestionThunk(params.id));
-      }
-    }, 200);
+    if (params.id) {
+      dispatch(getQuestionThunk(params.id));
+    }
   }, []);
 
   const handleRemove = () => {
@@ -48,7 +46,7 @@ const Question = () => {
     }
   };
 
-  if (loading || !question || loadingAuth || !user) return <Spinner />;
+  if (loading || !question || loadingAuth || !user) return <></>;
   return (
     <section className="p-4 w-full">
       {/* header */}
@@ -104,7 +102,7 @@ const Question = () => {
             </div>
             <CardUserInfo user={question.owner} from={question} />
           </div>
-          <CommentSection from={question} />
+          {/* <CommentSection from={question} type="question" /> */}
         </div>
       </div>
       <Answers />
