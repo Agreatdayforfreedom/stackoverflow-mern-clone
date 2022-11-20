@@ -84,13 +84,13 @@ export const sendComment = async (request: Request, response: Response) => {
   try {
     const answer = await AnswerModel.findOne({ _id: request.params.id });
 
-    const comment: Comment = {
-      content: request.body.content,
-      owner: request.user._id,
-    };
+    // const comment: Comment = {
+    //   content: request.body.content,
+    //   owner: request.user._id,
+    // };
     if (!answer) return HttpException("Answer not found", 400, response);
 
-    answer.comments.push(comment);
+    // answer.comments.push(comment);
     const commentSent = await answer.save();
 
     response.json(commentSent);

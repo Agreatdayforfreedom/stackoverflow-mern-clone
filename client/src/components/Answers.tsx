@@ -51,7 +51,6 @@ const PostAnswer = () => {
   const config = configAxios(token);
 
   useEffect(() => {
-    console.log(form);
     if ("content" in form && form.content.trim() !== "") {
       setFill(false);
     } else {

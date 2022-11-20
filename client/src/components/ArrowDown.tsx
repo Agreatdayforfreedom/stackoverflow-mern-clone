@@ -13,7 +13,13 @@ interface Props {
   initialScore: number;
   disabled: boolean;
   setDisabled: (state: boolean) => void;
-  chachedScore: (score?: number | undefined) => void;
+  chachedScore: ({
+    score,
+    initialScore,
+  }: {
+    score?: number;
+    initialScore?: number;
+  }) => void;
 }
 
 const ArrowDown = ({
@@ -30,20 +36,14 @@ const ArrowDown = ({
   const { token } = useAppSelector((state) => state.votes);
   const config = configAxios(token);
 
-  let initialState = voted;
-  // useEffect(() => {
-  //   console.log(voted, "down");
-  // }, [voted]);
-
   const downvote = () => {
     if (id) {
-      console.log(voted);
       if (voted === -1) {
-        chachedScore();
+        chachedScore({ initialScore });
         setVoted(2);
         dispatch(unvoteThunk({ id: id, config }));
       } else {
-        chachedScore(-1);
+        chachedScore({ score: -1 });
         setVoted(-1);
         dispatch(downvoteThunk({ id: id, config }));
       }
@@ -51,7 +51,6 @@ const ArrowDown = ({
       setTimeout(() => {
         setDisabled(false);
       }, 2000);
-      console.log(initialScore, "INITIAL SCORE");
     }
   };
 

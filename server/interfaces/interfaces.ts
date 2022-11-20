@@ -33,4 +33,5 @@ export interface Answer {
 export interface Comment {
   content: string;
   owner: Types.ObjectId;
+  post: Types.ObjectId | string;
 }

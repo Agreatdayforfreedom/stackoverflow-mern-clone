@@ -26,7 +26,6 @@ const AnswerForm = ({ answer }: Props) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log(form.content);
     if ("content" in form && form.content.trim() !== "") {
       setFill(false);
     } else {

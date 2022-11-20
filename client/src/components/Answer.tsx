@@ -52,7 +52,7 @@ const Answer = ({ answer }: Props) => {
           <CardUserInfo user={answer.owner} from={answer} />
         </div>
         {/* //TODO ADD COMMENTS */}
-        {/* <CommentSection from={answer} type={"answer"} /> */}
+        <CommentSection from={answer} type={"answer"} />
       </div>
     </div>
   );

@@ -18,7 +18,6 @@ interface Payload {
 export const upvoteThunk = createAsyncThunk(
   "vote/upvote",
   async ({ id, config }: Payload) => {
-    console.log(id, config);
     const { data } = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/vote/up/${id}`,
       {},
@@ -31,7 +30,6 @@ export const upvoteThunk = createAsyncThunk(
 export const downvoteThunk = createAsyncThunk(
   "vote/downvote",
   async ({ id, config }: Payload) => {
-    console.log(id, config);
     const { data } = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/vote/down/${id}`,
       {},
@@ -48,7 +46,6 @@ export const unvoteThunk = createAsyncThunk(
       `${import.meta.env.VITE_BACKEND_URL}/vote/unvote/${id}`,
       config
     );
-    console.log(data);
     return data;
   }
 );

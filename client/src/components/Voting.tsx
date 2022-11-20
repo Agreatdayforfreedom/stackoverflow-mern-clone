@@ -4,7 +4,6 @@ import { useAppSelector } from "../app/hooks";
 import { Vote } from "../interfaces/interfaces";
 import ArrowDown from "./ArrowDown";
 import ArrowUp from "./ArrowUp";
-import { Spinner } from "./Spinner";
 
 interface Props {
   id: string;
@@ -17,23 +16,23 @@ interface Votes {
 }
 
 const Voting = ({ id }: Props) => {
-  // const { votes: votesReducer, loading: loadingVotes } = useAppSelector(
-  //   (state) => state.votes
-  // );
   const [voted, setVoted] = useState<number>(2);
   const [votes, setVotes] = useState<Votes>({} as Votes);
   const [disabled, setDisabled] = useState<boolean>(false);
-  let initialScore: number = 0;
-  // const [postVoted, setPostVoted] = useState<{ id: any; vote: any }>(
-  //   {} as { id: any; vote: any }
-  // );
+  const [initialScore, setInitialScore] = useState<number>(0);
   const [loadingVotes, setLoadingVotes] = useState(true);
 
-  const chachedScore = (score: number | undefined) => {
+  const chachedScore = ({
+    score,
+    initialScore,
+  }: {
+    score?: number;
+    initialScore?: number;
+  }) => {
     if (score) {
       setVotes({ ...votes, score: (votes.score += score) });
-    } else {
-      setVotes({ ...votes, score: votes.score });
+    } else if (initialScore) {
+      setVotes({ ...votes, score: initialScore });
     }
   };
 
@@ -42,7 +41,6 @@ const Voting = ({ id }: Props) => {
       const { data } = await axios(
         `http://localhost:4000/api/vote/${id && id}`
       );
-      // console.log("fetch");
 
       if (data) {
         const votedit = data.votes.map((v: any) => {
@@ -57,9 +55,8 @@ const Voting = ({ id }: Props) => {
           (v: any) => v?.id === user?._id.toString()
         )[0] || { vote: 2 };
 
-        // console.log(voted.vote);
         setVoted(voted.vote);
-        initialScore = data.score;
+        setInitialScore(data.score);
         setLoadingVotes(false);
         setVotes(data);
       }
@@ -75,7 +72,7 @@ const Voting = ({ id }: Props) => {
       <ArrowUp
         className={className && className}
         setVoted={setVoted}
-        // initialScore={initialScore}
+        initialScore={initialScore}
         voted={voted}
         disabled={disabled}
         setDisabled={setDisabled}

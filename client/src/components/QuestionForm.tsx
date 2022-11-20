@@ -63,7 +63,6 @@ const QuestionForm = ({ defaultValues, id }: Props) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(form);
 
     let tags = form.tagsString
       .trim()

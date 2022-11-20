@@ -10,8 +10,15 @@ interface Props {
   voted: number;
   id: string;
   disabled: boolean;
+  initialScore: number;
   setDisabled: (state: boolean) => void;
-  chachedScore: (score?: number | undefined) => void;
+  chachedScore: ({
+    score,
+    initialScore,
+  }: {
+    score?: number;
+    initialScore?: number;
+  }) => void;
 }
 
 const ArrowUp = ({
@@ -21,33 +28,25 @@ const ArrowUp = ({
   id,
   disabled,
   setDisabled,
+  initialScore,
   chachedScore,
 }: Props) => {
   const dispatch = useAppDispatch();
   const { token } = useAppSelector((state) => state.votes);
-
-  // useEffect(() => {
-  //   console.log(voted, "down");
-  // }, [voted]);
-
   const config = configAxios(token);
-
-  // useEffect(() => {
-  //   console.log(voted);
-  // }, []);
 
   const upvote = () => {
     if (id) {
       if (voted === 1) {
-        chachedScore(-1);
+        chachedScore({ initialScore });
         setVoted(2);
         dispatch(unvoteThunk({ id: id, config }));
       } else {
-        chachedScore(1);
+        chachedScore({ score: 1 });
         setVoted(1);
-        dispatch(upvoteThunk({ id: id, config }));
       }
     }
+    dispatch(upvoteThunk({ id: id, config }));
     setDisabled(true);
     setTimeout(() => {
       setDisabled(false);

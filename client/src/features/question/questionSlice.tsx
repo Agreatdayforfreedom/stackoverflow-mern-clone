@@ -34,21 +34,6 @@ export const questionSlice = createSlice({
       state.loading = true;
       state.error = undefined;
     },
-    cacheComment: (state, action) => {
-      if (state.question) {
-        state.question.comments = [...state.question.comments, action.payload];
-      }
-    },
-    replaceComment: (state, action) => {
-      if (state.question) {
-        const found = state.question.comments.find(
-          (c) => c._id === action.payload._id
-        );
-        if (found) {
-          found.content = action.payload.content;
-        }
-      }
-    },
   },
   extraReducers(builder) {
     builder
@@ -88,7 +73,6 @@ export const questionSlice = createSlice({
   },
 });
 
-export const { clearState, cacheComment, replaceComment } =
-  questionSlice.actions;
+export const { clearState } = questionSlice.actions;
 
 export default questionSlice.reducer;

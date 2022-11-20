@@ -17,19 +17,7 @@ const questionSchema = new mongoose.Schema<
     content: { type: String, required: true, trim: true },
     tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    comments: [
-      {
-        type: new mongoose.Schema(
-          {
-            content: String,
-            owner: mongoose.Schema.Types.ObjectId,
-          },
-          {
-            timestamps: true,
-          }
-        ),
-      },
-    ],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   {
     toJSON: { virtuals: true },

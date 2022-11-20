@@ -102,7 +102,7 @@ const Question = () => {
             </div>
             <CardUserInfo user={question.owner} from={question} />
           </div>
-          {/* <CommentSection from={question} type="question" /> */}
+          <CommentSection from={question} type="question" />
         </div>
       </div>
       <Answers />

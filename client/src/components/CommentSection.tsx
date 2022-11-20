@@ -1,27 +1,31 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, SetStateAction, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   createCommentThunk,
+  deleteCommentThunk,
   editCommentThunk,
 } from "../features/comment/commentsApi";
 import { formatDate } from "../utils/formatDate";
 import Button from "./Button";
 import {
   Answer,
-  Comment as IComment,
+  Comment,
   Question as IQuestion,
 } from "../interfaces/interfaces";
 import { configAxios } from "../utils/configAxios";
-import {
-  cacheComment,
-  replaceComment,
-} from "../features/question/questionSlice";
 import { useForm } from "../hooks/useForm";
+import axios from "axios";
+import { CommentStatus_enum } from "../features/comment/commentSlice";
+
+enum Limit_enum {
+  initial = 3,
+  all = 999,
+}
 
 interface PropsComment {
-  comment: IComment;
+  comment: Comment;
   setForm: (state: FormType) => void;
   setToggleComment: (state: boolean) => void;
 }
@@ -37,43 +41,75 @@ interface FormType {
 }
 
 const CommentSection = ({ from, type }: PropsCS) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showMore, setShowMore] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(Limit_enum.initial);
   const [toggleComment, setToggleComment] = useState<boolean>(false);
+  const [commentFilled, setCommentFilled] = useState<Comment>({} as Comment);
+  const [comments, setComments] = useState<Comment[]>([] as Comment[]);
   const { form, handleChange, setForm } = useForm<FormType>();
-  const { user, loading } = useAppSelector((state) => state.auth);
-  const { comment, commentEdited } = useAppSelector((state) => state.comments);
+  const { user } = useAppSelector((state) => state.auth);
   const { token } = useAppSelector((state) => state.comments);
   const dispatch = useAppDispatch();
+  const { comment, commentStatus } = useAppSelector((state) => state.comments);
 
   const config = configAxios(token);
-  // if (loading) return <></>;
 
   useEffect(() => {
-    console.log(comment);
-    // setTimeout(() => {
-    //   if (comment) {
-    //     if (commentEdited) {
-    //       dispatch(replaceComment(comment));
-    //     } else {
-    //       dispatch(cacheComment(comment));
-    //     }
-    //   }
-    // }, 500);
+    const fetch = async () => {
+      const { data } = await axios(
+        `${import.meta.env.VITE_BACKEND_URL}/comment/${from._id}?limit=${limit}`
+      );
+      setComments(data.query);
+      setShowMore(data.commentsLength);
+      setLoading(false);
+    };
+    fetch();
+  }, [limit]);
+
+  useEffect(() => {
+    if (comment) {
+      setCommentFilled(comment);
+    }
   }, [comment]);
+
+  useEffect(() => {
+    if (
+      commentStatus === CommentStatus_enum.created &&
+      Object.keys(commentFilled).length > 0
+    ) {
+      setComments((prev) => [...prev, commentFilled]);
+    } else if (commentStatus === CommentStatus_enum.edited) {
+      setComments((prev: any) => {
+        if (commentFilled) {
+          const newState = prev.map((x: any) =>
+            x._id === commentFilled._id ? commentFilled : x
+          );
+          return newState;
+        }
+      });
+    } else if (commentStatus === CommentStatus_enum.deleted) {
+      setComments((prev: any) => {
+        if (commentFilled) {
+          const newState = prev.filter((x: any) => x._id !== commentFilled._id);
+          return newState;
+        }
+      });
+    }
+  }, [commentFilled]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (form.id) {
       const payload = {
-        commentId: form.id,
         content: form.content,
       };
       dispatch(
         editCommentThunk({
           payload,
-          id: from._id,
+          id: form.id,
           config,
-          type,
         })
       );
     } else {
@@ -86,7 +122,6 @@ const CommentSection = ({ from, type }: PropsCS) => {
           payload,
           id: from._id,
           config,
-          type,
         })
       );
     }
@@ -94,17 +129,24 @@ const CommentSection = ({ from, type }: PropsCS) => {
     setToggleComment(false);
   };
 
+  const handleShowMore = () => {
+    setLimit(Limit_enum.all);
+    setShowMore(0);
+  };
+
+  if (loading || !comments) return <></>;
   return (
     <>
       <div className="mt-5">
-        {from.comments.map((comment: IComment) => (
-          <Comment
-            key={nanoid()}
-            comment={comment}
-            setForm={setForm}
-            setToggleComment={setToggleComment}
-          />
-        ))}
+        {comments &&
+          comments.map((comment: Comment) => (
+            <CommentCard
+              key={nanoid()}
+              comment={comment}
+              setForm={setForm}
+              setToggleComment={setToggleComment}
+            />
+          ))}
 
         {toggleComment === false &&
           (!user ? (
@@ -119,6 +161,15 @@ const CommentSection = ({ from, type }: PropsCS) => {
               Add a comment
             </button>
           ))}
+
+        {showMore > 3 && limit === Limit_enum.initial && (
+          <button
+            className="text-sm text-blue-500 p-3"
+            onClick={handleShowMore}
+          >
+            show - <b>{showMore - limit} </b>- more
+          </button>
+        )}
       </div>
       {toggleComment && (
         <div className="mt-3">
@@ -145,17 +196,18 @@ const CommentSection = ({ from, type }: PropsCS) => {
   );
 };
 
-const Comment = ({ comment, setForm, setToggleComment }: PropsComment) => {
-  const { user } = useAppSelector((state) => state.auth);
-  if (comment.owner.username === "haoma") {
-    console.log(comment.owner._id === user?._id);
-  }
+const CommentCard = ({ comment, setForm, setToggleComment }: PropsComment) => {
+  const { user, token } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
-  // const { form, handleChange, setForm } = useForm<FormType>();
-
+  const config = configAxios(token);
   const editMode = () => {
     setForm({ id: comment._id, content: comment.content });
     setToggleComment(true);
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteCommentThunk({ id: comment._id, config }));
   };
 
   if (!comment || !user) return <></>;
@@ -164,12 +216,12 @@ const Comment = ({ comment, setForm, setToggleComment }: PropsComment) => {
       <p className="break-all">
         {comment.content}
         <span className="px-1">-</span>
-        <span className="text-blue-500">{comment.owner.username}</span>
+        <span className="text-blue-500">{comment.owner?.username}</span>
         <span className="px-1 text-xs text-gray-500">
           {formatDate(comment.createdAt)}
         </span>
       </p>
-      {comment.owner._id === user._id && (
+      {comment.owner?._id === user._id && (
         <div className="hidden">
           <span>-</span>
           <button
@@ -178,7 +230,10 @@ const Comment = ({ comment, setForm, setToggleComment }: PropsComment) => {
           >
             Edit
           </button>
-          <button className="px-1 text-red-800 hover:text-red-900">
+          <button
+            className="px-1 text-red-800 hover:text-red-900"
+            onClick={handleDelete}
+          >
             Delete
           </button>
         </div>
