@@ -65,7 +65,7 @@ const Question = () => {
         </div>
       </div>
       <div className="flex w-full">
-        <Voting id={question._id} />
+        <Voting postId={question._id} />
         <div className="w-full p-4">
           <p className="break-all">{question.content}</p>
           <div className="flex my-5">

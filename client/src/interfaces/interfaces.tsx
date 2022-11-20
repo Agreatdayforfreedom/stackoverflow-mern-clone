@@ -1,3 +1,5 @@
+import { VoteType_enum } from "../components/Voting";
+
 export interface User {
   _id: string;
   username: string;
@@ -53,7 +55,8 @@ export interface Tag {
 }
 
 export interface Vote {
-  vote: 1 | -1;
+  _id: string;
   voter: string;
   votedTo: string;
+  vote: Exclude<VoteType_enum, VoteType_enum.unvote>;
 }

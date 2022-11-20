@@ -5,7 +5,7 @@ import checkAuth from "../middlewares/checkAuth";
 import AnswerModel from "../models/Answer.model";
 import QuestionModel from "../models/Question.model";
 import UserModel from "../models/User.model";
-import VotesModel, { Vote, voteEnum } from "../models/Votes.model";
+import VotesModel, { Vote, VoteType_enum } from "../models/Votes.model";
 
 const voteRouter = Router();
 
@@ -22,104 +22,44 @@ voteRouter.get("/:id", async (request: Request, response: Response) => {
   }
 });
 
-//refactor this
-
-//upvote
-voteRouter.post(
-  "/up/:id",
+voteRouter.put(
+  "/:id/:vote",
   checkAuth,
   async (request: Request, response: Response) => {
     try {
-      const { id } = request.params;
-
-      if (request.user.reputation < 15) {
-        return HttpException("You need at least 15 reputation", 401, response);
-      }
-      await query(id, request, response, voteEnum.upvote);
-      return response.json(0);
-    } catch (error) {
-      console.log(error);
-      return HttpException("Internal server error", 500, response);
-    }
-  }
-);
-
-type Query = {
-  objectId: Types.ObjectId;
-  ownerId: Types.ObjectId;
-};
-
-//downvote
-voteRouter.post(
-  "/down/:id",
-  checkAuth,
-  async (request: Request, response: Response) => {
-    try {
-      const { id } = request.params;
-
-      if (request.user.reputation < 125) {
-        return HttpException("You need at least 125 reputation", 401, response);
-      }
-
-      await query(id, request, response, voteEnum.downvote);
-      return response.json(0);
+      const { id, vote } = request.params;
+      let objectId = new Types.ObjectId(id);
+      await query(objectId, request, response, parseInt(vote, 10));
     } catch (error) {
       return HttpException("Internal server error", 500, response);
     }
-  }
-);
-
-voteRouter.delete(
-  "/unvote/:id",
-  checkAuth,
-  async (request: Request, response: Response) => {
-    const owner = await VotesModel.findOne({ voter: request.user._id });
-
-    if (!owner) return response.sendStatus(401);
-    await VotesModel.deleteOne({
-      voteTo: request.params.id,
-      voter: request.user._id,
-    });
-    return response.sendStatus(204);
   }
 );
 
 async function query(
-  id: string,
+  postId: Types.ObjectId,
   request: Request,
   response: Response,
-  vote: voteEnum
+  vote: number
 ) {
-  let AorQ = {} as Query;
-
-  const question = await QuestionModel.findOne({ _id: id });
-  if (!question) {
-    const answer = await AnswerModel.findOne({ _id: id });
-    if (!answer) return HttpException("There's a problem.", 400, response);
-    AorQ.objectId = answer._id;
-    AorQ.ownerId = answer.owner._id;
-  } else {
-    AorQ.objectId = question._id;
-    AorQ.ownerId = question.owner._id;
-  }
-
-  const alreadyVoted = await VotesModel.findOne({
-    voteTo: AorQ.objectId,
+  // is there vote? then delete it;
+  //if not, continue
+  //if vote is type 0 delete it and return
+  await VotesModel.deleteOne({
+    voteTo: postId,
     voter: request.user._id,
   });
-  if (alreadyVoted) {
-    if (alreadyVoted.vote === vote) return;
-    alreadyVoted.vote = vote;
-    await alreadyVoted.save();
-    return;
+  if (vote === VoteType_enum.unvote) {
+    return HttpException("ok", 200, response);
   }
   const newVote = new VotesModel();
 
   newVote.voter = request.user._id;
-  newVote.voteTo = AorQ.objectId;
+  newVote.voteTo = postId;
   newVote.vote = vote;
 
-  await newVote.save();
+  const voted = await newVote.save();
+  return response.json(voted);
 }
 
 export default voteRouter;

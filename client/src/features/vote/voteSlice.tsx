@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Vote } from "../../interfaces/interfaces";
-import { downvoteThunk, unvoteThunk, upvoteThunk } from "./voteApi";
 
 export interface VoteAndCount {
   total: number;
@@ -45,30 +44,30 @@ const voteSlice = createSlice({
     //     state.votes = action.payload;
     //     state.loading = false;
     //   });
-    builder
-      .addCase(upvoteThunk.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(upvoteThunk.fulfilled, (state, action) => {
-        state.loading = false;
-        state.votes = undefined;
-      });
-    builder
-      .addCase(downvoteThunk.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(downvoteThunk.fulfilled, (state, action) => {
-        state.loading = false;
-        state.votes = undefined;
-      });
-    builder
-      .addCase(unvoteThunk.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(unvoteThunk.fulfilled, (state, action) => {
-        state.loading = false;
-        state.votes = undefined;
-      });
+    // builder
+    //   .addCase(upvoteThunk.pending, (state) => {
+    //     state.loading = true;
+    //   })
+    //   .addCase(upvoteThunk.fulfilled, (state, action) => {
+    //     state.loading = false;
+    //     state.votes = undefined;
+    //   });
+    // builder
+    //   .addCase(downvoteThunk.pending, (state) => {
+    //     state.loading = true;
+    //   })
+    //   .addCase(downvoteThunk.fulfilled, (state, action) => {
+    //     state.loading = false;
+    //     state.votes = undefined;
+    //   });
+    // builder
+    //   .addCase(unvoteThunk.pending, (state) => {
+    //     state.loading = true;
+    //   })
+    //   .addCase(unvoteThunk.fulfilled, (state, action) => {
+    //     state.loading = false;
+    //     state.votes = undefined;
+    //   });
   },
 });
 

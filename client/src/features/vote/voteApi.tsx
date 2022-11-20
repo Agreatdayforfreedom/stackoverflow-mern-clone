@@ -3,8 +3,9 @@ import axios from "axios";
 import { Config } from "../../interfaces/interfaces";
 
 interface Payload {
-  id: string;
+  postId: string;
   config: Config;
+  type: number;
 }
 
 // export const getVotesThunk = createAsyncThunk(
@@ -15,37 +16,52 @@ interface Payload {
 //   }
 // );
 
-export const upvoteThunk = createAsyncThunk(
-  "vote/upvote",
-  async ({ id, config }: Payload) => {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/vote/up/${id}`,
+export const voteThunk = createAsyncThunk(
+  "vote/vote",
+  async ({ postId, config, type }: Payload) => {
+    console.log(postId, type);
+    const { data } = await axios.put(
+      `${import.meta.env.VITE_BACKEND_URL}/vote/${postId}/${type}`,
       {},
       config
     );
+
+    console.log(data);
     return data;
   }
 );
 
-export const downvoteThunk = createAsyncThunk(
-  "vote/downvote",
-  async ({ id, config }: Payload) => {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/vote/down/${id}`,
-      {},
-      config
-    );
-    return data;
-  }
-);
+// export const upvoteThunk = createAsyncThunk(
+//   "vote/upvote",
+//   async ({ id, config }: Payload) => {
+//     const { data } = await axios.post(
+//       `${import.meta.env.VITE_BACKEND_URL}/vote/up/${id}`,
+//       {},
+//       config
+//     );
+//     return data;
+//   }
+// );
 
-export const unvoteThunk = createAsyncThunk(
-  "vote/unvote",
-  async ({ id, config }: Payload) => {
-    const { data } = await axios.delete(
-      `${import.meta.env.VITE_BACKEND_URL}/vote/unvote/${id}`,
-      config
-    );
-    return data;
-  }
-);
+// export const downvoteThunk = createAsyncThunk(
+//   "vote/downvote",
+//   async ({ id, config }: Payload) => {
+//     const { data } = await axios.post(
+//       `${import.meta.env.VITE_BACKEND_URL}/vote/down/${id}`,
+//       {},
+//       config
+//     );
+//     return data;
+//   }
+// );
+
+// export const unvoteThunk = createAsyncThunk(
+//   "vote/unvote",
+//   async ({ id, config }: Payload) => {
+//     const { data } = await axios.delete(
+//       `${import.meta.env.VITE_BACKEND_URL}/vote/unvote/${id}`,
+//       config
+//     );
+//     return data;
+//   }
+// );

@@ -26,8 +26,7 @@ body {
 }
 
 .arrow:disabled {
-  color: red !important;
-  background-color: none !important;
+  background: none !important;
 }
 
 .spinner {

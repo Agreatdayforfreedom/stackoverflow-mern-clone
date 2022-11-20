@@ -27,7 +27,7 @@ const Answer = ({ answer }: Props) => {
 
   return (
     <div className="flex w-full border-b border-slate-300 mt-5">
-      <Voting id={answer._id && answer._id} />
+      <Voting postId={answer._id && answer._id} />
       <div className="w-full px-4">
         <p className="break-all">{answer.content}</p>
         <div className="flex justify-between mt-4">
