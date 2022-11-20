@@ -10,12 +10,12 @@ const Header = () => {
 
   if (loading) return <></>;
   return (
-    <header className=" bg-white flex justify-between items-center shadow-lg fixed top-0 w-full">
+    <header className="z-20 bg-white flex justify-between items-center shadow-lg fixed top-0 w-full">
       <div className="flex p-2 mx-3 items-center">
         <FaCubes size={35} className="text-orange-400 mx-1" />
-        <h1 className="flex text-xl text-neutral-900">
+        <Link to="/" className="flex text-xl text-neutral-900">
           heap<span className="font-bold mx-1"> overflow</span>
-        </h1>
+        </Link>
       </div>
       <button onClick={() => dispatch(logout())}>Log Out</button>
       {user ? (

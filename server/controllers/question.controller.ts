@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 import HttpException from "../exceptions/http.exception";
-import { Comment } from "../interfaces/interfaces";
+import { Comment, Tag } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import QuestionModel from "../models/Question.model";
+import TagModel from "../models/Tag.model";
 
 export const getQuestions = async (request: Request, response: Response) => {
   try {
-    const questions = await QuestionModel.find();
+    const questions = await QuestionModel.find()
+      .sort([["createdAt", -1]])
+      .populate("votes")
+      .populate("tags");
     response.json(questions);
   } catch (error) {
     console.log(error);
@@ -17,11 +22,13 @@ export const getQuestion = async (request: Request, response: Response) => {
   try {
     const question = await QuestionModel.findOne({
       _id: request.params.id,
-    }).populate({
-      path: "comments.owner",
-      select: "-password",
-      model: "User",
-    });
+    })
+      .populate({
+        path: "comments.owner",
+        select: "-password",
+        model: "User",
+      })
+      .populate("tags");
     return response.json(question);
   } catch (error) {
     console.log(error);
@@ -34,7 +41,11 @@ export const newQuestion = async (request: Request, response: Response) => {
       title: request.body.title,
       content: request.body.content,
     });
-    question.tags.push(...request.body.tags);
+
+    const tags = await mergeTag(request.body.tags);
+
+    console.log(tags);
+    question.tags.push(...tags);
     question.owner = request.user._id;
 
     await question.save();
@@ -42,6 +53,35 @@ export const newQuestion = async (request: Request, response: Response) => {
     console.log(error);
   }
 };
+
+async function mergeTag(tags: string[]) {
+  const tagExists = await TagModel.find({
+    name: [...tags],
+  });
+
+  const tagsExistNames = tagExists.map((t: any) => t.name);
+  let intersection = tags.filter((x: string) => !tagsExistNames.includes(x));
+
+  let tagsIds: string[] = [];
+  let newTagIds: string[] = [];
+
+  if (tagExists) {
+    let tagIds = tagExists.map((t: Tag) => t._id.toString());
+    tagsIds = tagIds;
+  }
+
+  if (intersection.length > 0) {
+    newTagIds = await Promise.all(
+      intersection.map(async (tag) => {
+        const tags = await TagModel.create({
+          name: tag,
+        });
+        return tags._id.toString();
+      })
+    );
+  }
+  return tagsIds.concat(newTagIds);
+}
 
 export const updateQuestion = async (request: Request, response: Response) => {
   const { title, content, tags } = request.body;
@@ -53,11 +93,29 @@ export const updateQuestion = async (request: Request, response: Response) => {
     question.title = title || question.title;
     question.content = content || question.content;
 
-    if (request.body.tags) {
-      question.tags.addToSet(...tags);
+    const uniqueTags = await mergeTag(tags);
+    const questionTagIds = question.tags.map((x) => x._id.toString());
+
+    const tagToRemove = questionTagIds.filter(
+      (x) => uniqueTags.indexOf(x) == -1
+    );
+    const newTag = uniqueTags.filter((x) => questionTagIds.indexOf(x) == -1);
+
+    if (tagToRemove.length >= 1) {
+      await QuestionModel.updateOne(
+        { _id: question._id },
+        { $pull: { tags: { $in: [...tagToRemove] } } }
+      );
     }
-    await question.save();
-    response.sendStatus(204);
+
+    if (uniqueTags) {
+      await QuestionModel.updateOne(
+        { _id: question._id },
+        { $addToSet: { tags: { $each: [...newTag] } } }
+      );
+    }
+    const questionSaved = await question.save();
+    response.json(questionSaved);
   } catch (error) {
     console.log(error);
   }
@@ -89,20 +147,37 @@ export const deleteQuestion = async (request: Request, response: Response) => {
 };
 
 export const sendComment = async (request: Request, response: Response) => {
+  // try {
+  //   const question = await QuestionModel.findOne({ _id: request.params.id });
+  //   const comment: Comment = {
+  //     content: request.body.content,
+  //     owner: request.user._id,
+  //   };
+  //   if (!question) return HttpException("Question not found", 400, response);
+  //   question.comments.push(comment);
+  //   const commentSent = await question.save();
+  //   response.json(commentSent);
+  // } catch (error) {
+  //   console.log(error);
+  // }
+};
+
+export const editComment = async (request: Request, response: Response) => {
   try {
-    console.log(request.params);
-    const question = await QuestionModel.findOne({ _id: request.params.id });
+    // const question = await QuestionModel.findOneAndUpdate({ _id: request.params.id });
+    // if (!question) return HttpException("Question not found", 400, response);
 
-    const comment: Comment = {
-      content: request.body.content,
-      owner: request.user._id,
-    };
-    if (!question) return HttpException("There was a error", 400, response);
-
-    question.comments.push(comment);
-    const commentSent = await question.save();
-
-    response.json(commentSent);
+    const questionEdited = await QuestionModel.findOneAndUpdate(
+      { _id: request.params.id, "comments._id": request.body.commentId },
+      {
+        $set: {
+          "comments.$.content": request.body.content,
+        },
+      },
+      { returnDocument: "after" }
+    );
+    console.log(questionEdited);
+    return response.json(questionEdited);
   } catch (error) {
     console.log(error);
   }

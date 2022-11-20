@@ -2,7 +2,15 @@
 module.exports = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xs: "440px",
+      },
+    },
   },
-  plugins: [],
+  plugins: [
+    function ({ addVariant }) {
+      addVariant("hover-div", "&:hover > div");
+    },
+  ],
 };

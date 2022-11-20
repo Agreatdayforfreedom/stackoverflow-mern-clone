@@ -1,10 +1,8 @@
-import { AnyAction } from "redux";
-import axios from "axios";
 import { createSlice } from "@reduxjs/toolkit";
-import type { RootState } from "../../app/store";
 import { authThunk, loginThunk, signupThunk } from "./authApi";
 
 interface User {
+  _id: string;
   username: string;
   email: string;
   createdAt: string;
@@ -59,7 +57,6 @@ export const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(loginThunk.rejected, (state, action) => {
-        console.log(action.payload);
         state.error = action.payload as string;
         state.loading = false;
       });
