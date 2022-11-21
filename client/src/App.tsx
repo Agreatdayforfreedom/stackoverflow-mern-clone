@@ -13,11 +13,14 @@ import MainLayout from "./layouts/MainLayout";
 import AskQuestion from "./pages/AskQuestion";
 import EditAnswer from "./pages/EditAnswer";
 import EditQuestion from "./pages/EditQuestion";
+import EditTagInfo from "./pages/EditTagInfo";
 import Home from "./pages/Home";
 // import Some from "./features/auth/Some";
 import Login from "./pages/Login";
 import Question from "./pages/Question";
 import SignUp from "./pages/SignUp";
+import Tagged from "./pages/Tagged";
+import Tags from "./pages/Tags";
 
 function App() {
   return (
@@ -30,7 +33,10 @@ function App() {
             <Route index element={<Home />} />
             <Route path="/questions/:id" element={<Question />} />
             <Route path="/questions/:id/edit" element={<EditQuestion />} />
+            <Route path="/questions/tagged/:tag" element={<Tagged />} />
             <Route path="/answer/:id/edit" element={<EditAnswer />} />
+            <Route path="/tags" element={<Tags />} />
+            <Route path="/edit-tag/:tagName" element={<EditTagInfo />} />
           </Route>
           <Route path="/questions/ask" element={<AskQuestion />} />
         </Route>

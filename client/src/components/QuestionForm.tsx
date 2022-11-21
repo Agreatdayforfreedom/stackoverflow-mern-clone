@@ -36,7 +36,7 @@ const QuestionForm = ({ defaultValues, id }: Props) => {
 
   const { handleChange, form, setForm } = useForm<AskQuesionForm>();
 
-  const { token, loading } = useAppSelector((state) => state.question);
+  const { token, question } = useAppSelector((state) => state.question);
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -46,6 +46,15 @@ const QuestionForm = ({ defaultValues, id }: Props) => {
       setForm(defaultValues);
     }
   }, []);
+
+  // useEffect(() => {
+
+  //   setTimeout(() => {
+  //     if (question?._id) {
+  //       navigate(`/questions/${question._id}`);
+  //     }
+  //   }, 600);
+  // }, [question]);
 
   useEffect(() => {
     if (
@@ -76,16 +85,20 @@ const QuestionForm = ({ defaultValues, id }: Props) => {
     };
     if (id) {
       dispatch(editQuestionThunk({ payload, id, config }));
-      if (!loading) {
-        navigate(`/questions/${id}`);
+      if (question) {
+        navigate(`/questions/${question._id}`);
       }
     } else {
       dispatch(createQuestionThunk({ payload, config }));
     }
   };
 
+  const show = () => {
+    console.log(question);
+  };
   return (
     <form className="m-4" onSubmit={handleSubmit}>
+      <button onClick={show}>show</button>
       <div className="flex flex-col bg-white border rounded border-slate-400 my-5 p-5">
         <label htmlFor="title" className="font-semibold text-slate-700 text-lg">
           Title

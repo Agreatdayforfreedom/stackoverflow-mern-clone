@@ -10,6 +10,10 @@
   --blue-700: #0064bd;
 }
 
+* {
+  font-family: "Roboto", sans-serif;
+}
+
 textarea:focus,
 input:focus {
   outline: 0;

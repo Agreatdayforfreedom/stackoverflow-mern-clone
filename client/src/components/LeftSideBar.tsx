@@ -39,7 +39,6 @@ const SideBar = () => {
             <li>
               <p className="text-slate-500 p-2 uppercase text-xs">public</p>
             </li>
-            {/* <div className="ml-4"> */}
             <li
               className={`flex items-center py-2  hover:text-black hover:cursor-pointer ${
                 path.includes("/questions") &&
@@ -51,13 +50,16 @@ const SideBar = () => {
               </span>
               Questions
             </li>
-            <li
-              className={`py-2 px-8 hover:text-black hover:cursor-pointer" ${
-                path === "/tags" &&
-                "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
-              }`}
-            >
-              Tags
+            <li>
+              <Link
+                to="/tags"
+                className={`inline-block w-full py-2 px-8 hover:text-black hover:cursor-pointer" ${
+                  path === "/tags" &&
+                  "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
+                }`}
+              >
+                Tags
+              </Link>
             </li>
             <li
               className={`py-2 px-8 hover:text-black hover:cursor-pointer ${

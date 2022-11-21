@@ -14,6 +14,8 @@ export interface Question {
   _id: string;
   title: string;
   content: string;
+  votes?: number;
+  answers?: number;
   tags: Array<Tag>;
   comments: Array<Comment>;
   owner: User; //user
@@ -48,8 +50,10 @@ export interface Config {
 }
 
 export interface Tag {
+  _id: string;
   name: string;
   infoTag: string;
+  totalQuestions?: number;
   createdAt: Date;
   updatedAt: Date;
 }

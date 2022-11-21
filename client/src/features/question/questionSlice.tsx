@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Question } from "../../interfaces/interfaces";
 import {
+  createQuestionThunk,
   editQuestionThunk,
+  getQuestionsByTagThunk,
   getQuestionsThunk,
   getQuestionThunk,
   removeQuestionThunk,
@@ -12,6 +14,7 @@ interface InitialState {
   question: Question | undefined;
   loading: boolean;
   token: string;
+  total: number;
   error: undefined | string;
 }
 
@@ -21,6 +24,7 @@ const initialState: InitialState = {
   questions: [],
   question: undefined,
   token,
+  total: 0,
   loading: true,
   error: undefined,
 };
@@ -29,11 +33,7 @@ export const questionSlice = createSlice({
   name: "question",
   initialState,
   reducers: {
-    clearState: (state) => {
-      state.question = undefined;
-      state.loading = true;
-      state.error = undefined;
-    },
+    clearState: () => initialState,
   },
   extraReducers(builder) {
     builder
@@ -54,20 +54,43 @@ export const questionSlice = createSlice({
         state.question = action.payload;
       });
     builder
+      .addCase(getQuestionsByTagThunk.pending, (state) => {
+        state.loading = true;
+        state.questions = [];
+        state.total = 0;
+      })
+      .addCase(getQuestionsByTagThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.questions = action.payload.question;
+        state.total = action.payload.length;
+      });
+    builder
+      .addCase(createQuestionThunk.pending, (state) => {
+        state.question = undefined;
+        state.loading = true;
+      })
+      .addCase(createQuestionThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.question = action.payload;
+      });
+    builder
       .addCase(editQuestionThunk.pending, (state) => {
         state.question = undefined;
         state.loading = true;
       })
-      .addCase(editQuestionThunk.fulfilled, (state) => {
-        state.question = undefined;
+      .addCase(editQuestionThunk.fulfilled, (state, action) => {
+        state.question = action.payload;
         state.loading = false;
       });
     builder
       .addCase(removeQuestionThunk.pending, (state) => {
         state.loading = true;
       })
-      .addCase(removeQuestionThunk.fulfilled, (state) => {
+      .addCase(removeQuestionThunk.fulfilled, (state, action) => {
         state.question = undefined;
+        state.questions = state.questions.filter(
+          (x) => x._id !== action.payload.id
+        );
         state.loading = false;
       });
   },

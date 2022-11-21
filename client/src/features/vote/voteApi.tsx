@@ -8,13 +8,13 @@ interface Payload {
   type: number;
 }
 
-// export const getVotesThunk = createAsyncThunk(
-//   "vote/getVotes",
-//   async (id: string) => {
-//     const { data } = await axios(`http://localhost:4000/api/vote/${id}`);
-//     return data;
-//   }
-// );
+export const getVotesThunk = createAsyncThunk(
+  "vote/getVotes",
+  async (id: string) => {
+    const { data } = await axios(`http://localhost:4000/api/vote/${id}`);
+    return data;
+  }
+);
 
 export const voteThunk = createAsyncThunk(
   "vote/vote",

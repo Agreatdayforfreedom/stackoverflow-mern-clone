@@ -34,6 +34,21 @@ export const getQuestionThunk = createAsyncThunk(
       const { data } = await axios(
         `${import.meta.env.VITE_BACKEND_URL}/question/${id}`
       );
+      console.log(data);
+      return data;
+    } catch (error) {
+      return rejectWithValue("error");
+    }
+  }
+);
+
+export const getQuestionsByTagThunk = createAsyncThunk(
+  "question/getQuestionByTag",
+  async ({ id }: { id: string }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios(
+        `${import.meta.env.VITE_BACKEND_URL}/question/tag/${id}`
+      );
       return data;
     } catch (error) {
       return rejectWithValue("error");
@@ -50,6 +65,7 @@ export const createQuestionThunk = createAsyncThunk(
         payload,
         config
       );
+      console.log(data);
       return data;
     } catch (error) {
       return rejectWithValue("error");

@@ -61,7 +61,8 @@ const Voting = ({ postId }: Props) => {
         prev = prev * 0;
       }
       if (type === VoteType_enum.unvote && position) {
-        console.log("here");
+        //todo: toggle between up and down doens't work
+        //todo: limit the size of the comments
         return (prev = votes.score);
       }
       return (prev += type);

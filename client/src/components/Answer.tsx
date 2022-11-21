@@ -51,7 +51,6 @@ const Answer = ({ answer }: Props) => {
           </div>
           <CardUserInfo user={answer.owner} from={answer} />
         </div>
-        {/* //TODO ADD COMMENTS */}
         <CommentSection from={answer} type={"answer"} />
       </div>
     </div>

@@ -17,7 +17,6 @@ const questionSchema = new mongoose.Schema<
     content: { type: String, required: true, trim: true },
     tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   {
     toJSON: { virtuals: true },
@@ -46,6 +45,13 @@ questionSchema.virtual("votes", {
   ref: "Vote",
   localField: "_id",
   foreignField: "voteTo",
+  count: true,
+});
+
+questionSchema.virtual("answers", {
+  ref: "Answer",
+  localField: "_id",
+  foreignField: "question",
   count: true,
 });
 

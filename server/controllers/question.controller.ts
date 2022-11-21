@@ -11,6 +11,7 @@ export const getQuestions = async (request: Request, response: Response) => {
     const questions = await QuestionModel.find()
       .sort([["createdAt", -1]])
       .populate("votes")
+      .populate("answers")
       .populate("tags");
     response.json(questions);
   } catch (error) {
@@ -22,14 +23,32 @@ export const getQuestion = async (request: Request, response: Response) => {
   try {
     const question = await QuestionModel.findOne({
       _id: request.params.id,
+    }).populate("tags");
+    //todo: edit post does not work
+    return response.json(question);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getQuestionsByTag = async (
+  request: Request,
+  response: Response
+) => {
+  const { id } = request.params;
+  try {
+    const question = await QuestionModel.find({
+      tags: { $all: [id] },
     })
+      .sort([["createdAt", -1]])
       .populate({
         path: "comments.owner",
         select: "-password",
         model: "User",
       })
       .populate("tags");
-    return response.json(question);
+    const length = question.length;
+    return response.json({ question, length });
   } catch (error) {
     console.log(error);
   }
@@ -44,11 +63,13 @@ export const newQuestion = async (request: Request, response: Response) => {
 
     const tags = await mergeTag(request.body.tags);
 
-    console.log(tags);
     question.tags.push(...tags);
     question.owner = request.user._id;
 
-    await question.save();
+    const questionCreated = await question.save();
+    const questionPopulated = await questionCreated.populate("owner");
+    const _questionPopulated = await questionPopulated.populate("tags");
+    return response.json(_questionPopulated);
   } catch (error) {
     console.log(error);
   }
@@ -85,13 +106,14 @@ async function mergeTag(tags: string[]) {
 
 export const updateQuestion = async (request: Request, response: Response) => {
   const { title, content, tags } = request.body;
-
+  console.log({ title, content, tags });
   try {
     const question = await QuestionModel.findOne({ _id: request.params.id });
     if (!question) return HttpException("Question not found", 404, response);
 
     question.title = title || question.title;
     question.content = content || question.content;
+    console.log(question.comments);
 
     const uniqueTags = await mergeTag(tags);
     const questionTagIds = question.tags.map((x) => x._id.toString());
@@ -115,7 +137,8 @@ export const updateQuestion = async (request: Request, response: Response) => {
       );
     }
     const questionSaved = await question.save();
-    response.json(questionSaved);
+    const _questionPopulated = await questionSaved.populate("tags");
+    response.json(_questionPopulated);
   } catch (error) {
     console.log(error);
   }
@@ -140,44 +163,7 @@ export const deleteQuestion = async (request: Request, response: Response) => {
       answers &&
         (await AnswerModel.deleteMany({ question: request.params.id })),
     ]);
-    return response.sendStatus(204);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const sendComment = async (request: Request, response: Response) => {
-  // try {
-  //   const question = await QuestionModel.findOne({ _id: request.params.id });
-  //   const comment: Comment = {
-  //     content: request.body.content,
-  //     owner: request.user._id,
-  //   };
-  //   if (!question) return HttpException("Question not found", 400, response);
-  //   question.comments.push(comment);
-  //   const commentSent = await question.save();
-  //   response.json(commentSent);
-  // } catch (error) {
-  //   console.log(error);
-  // }
-};
-
-export const editComment = async (request: Request, response: Response) => {
-  try {
-    // const question = await QuestionModel.findOneAndUpdate({ _id: request.params.id });
-    // if (!question) return HttpException("Question not found", 400, response);
-
-    const questionEdited = await QuestionModel.findOneAndUpdate(
-      { _id: request.params.id, "comments._id": request.body.commentId },
-      {
-        $set: {
-          "comments.$.content": request.body.content,
-        },
-      },
-      { returnDocument: "after" }
-    );
-    console.log(questionEdited);
-    return response.json(questionEdited);
+    return response.json({ id: question._id });
   } catch (error) {
     console.log(error);
   }
