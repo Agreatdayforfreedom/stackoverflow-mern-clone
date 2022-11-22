@@ -47,14 +47,15 @@ const QuestionForm = ({ defaultValues, id }: Props) => {
     }
   }, []);
 
-  // useEffect(() => {
-
-  //   setTimeout(() => {
-  //     if (question?._id) {
-  //       navigate(`/questions/${question._id}`);
-  //     }
-  //   }, 600);
-  // }, [question]);
+  useEffect(() => {
+    //todo: is this the best way to redirect?
+    //?
+    setTimeout(() => {
+      if (question?._id && !id) {
+        navigate(`/questions/${question._id}`);
+      }
+    }, 600);
+  }, [question]);
 
   useEffect(() => {
     if (

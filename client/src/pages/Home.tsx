@@ -15,13 +15,13 @@ const Home = () => {
   useEffect(() => {
     dispatch(clearState());
 
-    dispatch(getQuestionsThunk());
+    dispatch(getQuestionsThunk({ limit: 20 }));
   }, []);
 
   return (
     <section className="mt-5 w-full flex flex-col">
       <div className="flex justify-between mt-2 mb-5">
-        <h1 className=" mx-5 text-3xl">Top Quesions</h1>
+        <h1 className=" mx-5 text-3xl text-slate-700">Top Quesions</h1>
         <Link to="/questions/ask" className="button primary">
           Ask Question
         </Link>

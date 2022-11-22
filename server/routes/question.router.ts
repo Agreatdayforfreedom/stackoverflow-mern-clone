@@ -12,6 +12,7 @@ import checkAuth from "../middlewares/checkAuth";
 const questionRouter = Router();
 
 questionRouter.get("/", getQuestions);
+questionRouter.get("/top", getQuestions);
 questionRouter.get("/:id", getQuestion);
 questionRouter.get("/tag/:id", getQuestionsByTag);
 questionRouter.post("/new", checkAuth, newQuestion);

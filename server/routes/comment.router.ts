@@ -35,16 +35,12 @@ commentRouter.post(
   checkAuth,
   async (request: Request, response: Response) => {
     try {
-      // const question = await QuestionModel.findOne({ _id: request.params.id });
-
       const comment: Comment = {
         content: request.body.content,
         owner: request.user._id,
         post: request.params.id,
       };
-      // if (!question) return HttpException("Question not found", 400, response);
 
-      // question.comments.push(comment);
       const commentCreated = await CommentModel.create(comment);
       const _commentPopulated = await commentCreated.populate(
         "owner",

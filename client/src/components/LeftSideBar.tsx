@@ -39,16 +39,19 @@ const SideBar = () => {
             <li>
               <p className="text-slate-500 p-2 uppercase text-xs">public</p>
             </li>
-            <li
-              className={`flex items-center py-2  hover:text-black hover:cursor-pointer ${
-                path.includes("/questions") &&
-                "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
-              }`}
-            >
-              <span>
-                <BiWorld size={20} className="ml-2 mr-1" />
-              </span>
-              Questions
+            <li>
+              <Link
+                to="/questions"
+                className={`flex items-center py-2  hover:text-black hover:cursor-pointer ${
+                  path.includes("/questions") &&
+                  "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
+                }`}
+              >
+                <span>
+                  <BiWorld size={20} className="ml-2 mr-1" />
+                </span>
+                Questions
+              </Link>
             </li>
             <li>
               <Link

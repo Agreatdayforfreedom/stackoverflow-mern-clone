@@ -18,6 +18,7 @@ import Home from "./pages/Home";
 // import Some from "./features/auth/Some";
 import Login from "./pages/Login";
 import Question from "./pages/Question";
+import Questions from "./pages/Questions";
 import SignUp from "./pages/SignUp";
 import Tagged from "./pages/Tagged";
 import Tags from "./pages/Tags";
@@ -37,6 +38,7 @@ function App() {
             <Route path="/answer/:id/edit" element={<EditAnswer />} />
             <Route path="/tags" element={<Tags />} />
             <Route path="/edit-tag/:tagName" element={<EditTagInfo />} />
+            <Route path="/questions" element={<Questions />} />
           </Route>
           <Route path="/questions/ask" element={<AskQuestion />} />
         </Route>

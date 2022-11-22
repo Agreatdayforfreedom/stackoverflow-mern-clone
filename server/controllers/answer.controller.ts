@@ -8,13 +8,7 @@ export const getAnswers = async (request: Request, response: Response) => {
   try {
     const answers = await AnswerModel.find({
       question: request.params.id,
-    })
-      .populate("owner")
-      .populate({
-        path: "comments.owner",
-        select: "-password",
-        model: "User",
-      });
+    }).populate("owner");
     return response.json(answers);
   } catch (error) {
     console.log(error);
@@ -26,7 +20,6 @@ export const getAnswer = async (request: Request, response: Response) => {
     const answers = await AnswerModel.findOne({
       _id: request.params.id,
     }).populate("owner");
-    console.log(answers);
     return response.json(answers);
   } catch (error) {
     console.log(error);
@@ -78,41 +71,4 @@ export const deleteAnswer = async (request: Request, response: Response) => {
   const answerDeleted = await AnswerModel.deleteOne({ _id: answer._id });
 
   return response.json(answerDeleted);
-};
-
-export const sendComment = async (request: Request, response: Response) => {
-  try {
-    const answer = await AnswerModel.findOne({ _id: request.params.id });
-
-    // const comment: Comment = {
-    //   content: request.body.content,
-    //   owner: request.user._id,
-    // };
-    if (!answer) return HttpException("Answer not found", 400, response);
-
-    // answer.comments.push(comment);
-    const commentSent = await answer.save();
-
-    response.json(commentSent);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const editComment = async (request: Request, response: Response) => {
-  try {
-    const answerEdited = await AnswerModel.findOneAndUpdate(
-      { _id: request.params.id, "comments._id": request.body.commentId },
-      {
-        $set: {
-          "comments.$.content": request.body.content,
-        },
-      },
-      { returnDocument: "after" }
-    );
-    console.log(answerEdited);
-    return response.json(answerEdited);
-  } catch (error) {
-    console.log(error);
-  }
 };

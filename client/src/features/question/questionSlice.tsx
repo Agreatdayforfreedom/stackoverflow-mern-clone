@@ -40,10 +40,12 @@ export const questionSlice = createSlice({
       .addCase(getQuestionsThunk.pending, (state) => {
         state.questions = [];
         state.loading = true;
+        state.total = 0;
       })
       .addCase(getQuestionsThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.questions = action.payload;
+        state.questions = action.payload.questions;
+        state.total = action.payload.questionsCount;
       });
     builder
       .addCase(getQuestionThunk.pending, (state) => {
@@ -61,8 +63,8 @@ export const questionSlice = createSlice({
       })
       .addCase(getQuestionsByTagThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.questions = action.payload.question;
-        state.total = action.payload.length;
+        state.questions = action.payload.questions;
+        state.total = action.payload.questionsCount;
       });
     builder
       .addCase(createQuestionThunk.pending, (state) => {

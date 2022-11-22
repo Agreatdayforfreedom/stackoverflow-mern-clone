@@ -1,19 +1,34 @@
 import { Request, Response } from "express";
-import { Types } from "mongoose";
 import HttpException from "../exceptions/http.exception";
-import { Comment, Tag } from "../interfaces/interfaces";
+import { Tag } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import QuestionModel from "../models/Question.model";
 import TagModel from "../models/Tag.model";
 
-export const getQuestions = async (request: Request, response: Response) => {
+export const getQuestions = async (
+  request: Request<{}, {}, {}, { limit: string; skip: string }>,
+  response: Response
+) => {
   try {
-    const questions = await QuestionModel.find()
+    const { limit, skip } = request.query;
+    //todo: how to type this?
+    let questions: any = QuestionModel.find();
+
+    const questionsCount = await questions.clone().countDocuments();
+    if (skip != "0") {
+      questions = questions.clone().skip(parseInt(skip, 10));
+    }
+    if (limit != "0") {
+      questions = questions.clone().limit(parseInt(limit, 10));
+    }
+    questions = await questions
+      .clone()
       .sort([["createdAt", -1]])
       .populate("votes")
       .populate("answers")
       .populate("tags");
-    response.json(questions);
+
+    response.json({ questionsCount, questions });
   } catch (error) {
     console.log(error);
   }
@@ -32,23 +47,25 @@ export const getQuestion = async (request: Request, response: Response) => {
 };
 
 export const getQuestionsByTag = async (
-  request: Request,
+  request: Request<{ id: string }, {}, {}, { limit: string; skip: string }>,
   response: Response
 ) => {
   const { id } = request.params;
+  const { limit, skip } = request.query;
   try {
-    const question = await QuestionModel.find({
+    let questions: any = QuestionModel.find({
       tags: { $all: [id] },
-    })
-      .sort([["createdAt", -1]])
-      .populate({
-        path: "comments.owner",
-        select: "-password",
-        model: "User",
-      })
-      .populate("tags");
-    const length = question.length;
-    return response.json({ question, length });
+    });
+
+    const questionsCount = await questions.clone().countDocuments();
+    if (skip != "0") {
+      questions = questions.clone().skip(parseInt(skip, 10));
+    }
+    if (limit != "0") {
+      questions = questions.clone().limit(parseInt(limit, 10));
+    }
+    questions = await questions.sort([["createdAt", -1]]).populate("tags");
+    return response.json({ questionsCount, questions });
   } catch (error) {
     console.log(error);
   }

@@ -9,15 +9,19 @@ interface Payload {
     title: string;
     content: string;
   };
-  config: Config;
+  config?: Config;
+  limit?: number;
+  skip?: number;
 }
 
 export const getQuestionsThunk = createAsyncThunk(
   "question/getQuestions",
-  async (_, { rejectWithValue }) => {
+  async ({ limit, skip }: Payload, { rejectWithValue }) => {
     try {
       const { data } = await axios(
-        `${import.meta.env.VITE_BACKEND_URL}/question`
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/question?limit=${limit}&skip=${skip}`
       );
 
       return data;
@@ -44,10 +48,12 @@ export const getQuestionThunk = createAsyncThunk(
 
 export const getQuestionsByTagThunk = createAsyncThunk(
   "question/getQuestionByTag",
-  async ({ id }: { id: string }, { rejectWithValue }) => {
+  async ({ id, limit, skip }: Payload, { rejectWithValue }) => {
     try {
       const { data } = await axios(
-        `${import.meta.env.VITE_BACKEND_URL}/question/tag/${id}`
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/question/tag/${id}?limit=${limit}&skip=${skip}`
       );
       return data;
     } catch (error) {
