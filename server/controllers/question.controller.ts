@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
 import { Tag } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
+import CommentModel from "../models/Comment.model";
 import QuestionModel from "../models/Question.model";
 import TagModel from "../models/Tag.model";
 
@@ -190,11 +191,11 @@ export const deleteQuestion = async (request: Request, response: Response) => {
     }
 
     const answers = await AnswerModel.find({ question: request.params.id });
-
     await Promise.all([
       await QuestionModel.deleteOne({ _id: request.params.id }),
       answers &&
         (await AnswerModel.deleteMany({ question: request.params.id })),
+      await CommentModel.deleteMany({ post: request.params.id }),
     ]);
     return response.json({ id: question._id });
   } catch (error) {

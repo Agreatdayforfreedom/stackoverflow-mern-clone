@@ -3,6 +3,7 @@ import mongoose, { HydratedDocument, Query } from "mongoose";
 import HttpException from "../exceptions/http.exception";
 import { Answer, Comment } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
+import CommentModel from "../models/Comment.model";
 import QuestionModel from "../models/Question.model";
 
 export const getAnswers = async (request: Request, response: Response) => {
@@ -117,7 +118,9 @@ export const deleteAnswer = async (request: Request, response: Response) => {
   if (answer.owner._id.toString() !== request.user._id.toString())
     return HttpException("Not authorized", 401, response);
 
-  const answerDeleted = await AnswerModel.deleteOne({ _id: answer._id });
-
+  const [answerDeleted, _] = await Promise.all([
+    await AnswerModel.deleteOne({ _id: answer._id }),
+    await CommentModel.deleteMany({ post: answer._id }),
+  ]);
   return response.json(answerDeleted);
 };
