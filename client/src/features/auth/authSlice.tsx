@@ -1,12 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { User } from "../../interfaces/interfaces";
 import { authThunk, loginThunk, signupThunk } from "./authApi";
-
-interface User {
-  _id: string;
-  username: string;
-  email: string;
-  createdAt: string;
-}
 
 // Define a type for the slice state
 interface AuthState {

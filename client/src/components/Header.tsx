@@ -10,18 +10,35 @@ const Header = () => {
 
   if (loading) return <></>;
   return (
-    <header className="z-20 bg-white flex justify-between items-center shadow-lg fixed top-0 w-full">
-      <div className="flex p-2 mx-3 items-center">
+    <header className="z-20 bg-white flex justify-between h-[50px] items-center shadow-lg fixed top-0 w-full">
+      <div className="flex mx-3 items-center">
         <FaCubes size={35} className="text-orange-400 mx-1" />
         <Link to="/" className="flex text-xl text-neutral-900">
           heap<span className="font-bold mx-1"> overflow</span>
         </Link>
       </div>
-      <button onClick={() => dispatch(logout())}>Log Out</button>
       {user ? (
-        <div>
-          welcome
-          {user.username}
+        <div className="flex h-full">
+          <Link
+            to={`/users/${user._id}`}
+            className="flex h-full items-center justify-center mr-10 hover:bg-slate-200 transition-colors px-4"
+          >
+            <img
+              src={user.avatar}
+              alt={user.username}
+              className="w-6 h-6 rounded"
+            />
+            <span className="text-sm font-semibold text-slate-600 mx-1">
+              {user.reputation}
+            </span>
+          </Link>
+
+          <button
+            className="text-sm font-semibold text-orange-500 hover:bg-orange-100 hover:text-slate-900 transition-all px-3"
+            onClick={() => dispatch(logout())}
+          >
+            Log out
+          </button>
         </div>
       ) : (
         <div>
