@@ -1,5 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { FormEvent, SetStateAction, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
@@ -42,6 +42,7 @@ interface FormType {
 
 const CommentSection = ({ from, type }: PropsCS) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [sizeComment, setSizeComment] = useState<number>(0);
   const [showMore, setShowMore] = useState<number>(0);
   const [limit, setLimit] = useState<number>(Limit_enum.initial);
   const [toggleComment, setToggleComment] = useState<boolean>(false);
@@ -74,12 +75,7 @@ const CommentSection = ({ from, type }: PropsCS) => {
   }, [comment]);
 
   useEffect(() => {
-    if (
-      commentStatus === CommentStatus_enum.created &&
-      Object.keys(commentFilled).length > 0
-    ) {
-      setComments((prev) => [...prev, commentFilled]);
-    } else if (commentStatus === CommentStatus_enum.edited) {
+    if (commentStatus === CommentStatus_enum.edited) {
       setComments((prev: any) => {
         if (commentFilled) {
           const newState = prev.map((x: any) =>
@@ -98,7 +94,13 @@ const CommentSection = ({ from, type }: PropsCS) => {
     }
   }, [commentFilled]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if ("content" in form) {
+      setSizeComment(form.content.length);
+    }
+  }, [form]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (form.id) {
@@ -117,13 +119,12 @@ const CommentSection = ({ from, type }: PropsCS) => {
         content: form.content,
       };
 
-      dispatch(
-        createCommentThunk({
-          payload,
-          id: from._id,
-          config,
-        })
+      const { data } = await axios.post(
+        `http://localhost:4000/api/comment/new/${from._id}`,
+        { content: payload.content },
+        config
       );
+      setComments((prev) => [data, ...prev]);
     }
     setForm({ content: "" } as FormType);
     setToggleComment(false);
@@ -174,15 +175,19 @@ const CommentSection = ({ from, type }: PropsCS) => {
       {toggleComment && (
         <div className="mt-3">
           <form className="flex" onSubmit={handleSubmit}>
-            <textarea
-              name="content"
-              id="content"
-              placeholder="add a useful comment"
-              value={form && form.content}
-              onChange={handleChange}
-              className="w-full bg-transparent p-2 border border-slate-300 placeholder:text-sm"
-              autoFocus
-            ></textarea>
+            <div className="w-full">
+              <textarea
+                name="content"
+                id="content"
+                placeholder="add a useful comment"
+                value={form && form.content}
+                onChange={handleChange}
+                maxLength={255}
+                className=" w-full bg-transparent p-2 border border-slate-300 placeholder:text-sm"
+                autoFocus
+              ></textarea>
+              <span className="text-sm">{sizeComment} / 255</span>
+            </div>
             <div className="mx-2">
               <Button
                 name={form.id ? "Save edits" : "Add comment"}

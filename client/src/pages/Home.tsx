@@ -3,13 +3,14 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import QuestionCard from "../components/QuestionCard";
+import { Spinner } from "../components/Spinner";
 import Tag from "../components/Tag";
 import { getQuestionsThunk } from "../features/question/questionApi";
 import { clearState } from "../features/question/questionSlice";
 import { Question, Tag as ITag } from "../interfaces/interfaces";
 
 const Home = () => {
-  const { questions } = useAppSelector((state) => state.question);
+  const { questions, loading } = useAppSelector((state) => state.question);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -18,6 +19,7 @@ const Home = () => {
     dispatch(getQuestionsThunk({ limit: 20 }));
   }, []);
 
+  if (loading) return <></>;
   return (
     <section className="mt-5 w-full flex flex-col">
       <div className="flex justify-between mt-2 mb-5">
@@ -29,7 +31,18 @@ const Home = () => {
       {questions.map((q: Question) => (
         <QuestionCard key={nanoid()} question={q} />
       ))}
-      <div className="hidden md:block">empty sectionnnnnnnn</div>
+      <h2 className="text-lg p-5 text-slate-700">
+        Looking for more? Browse
+        <Link to="/questions" className="text-blue-500 hover:text-blue-600 ">
+          {" "}
+          the complete list of questions
+        </Link>
+        , or
+        <Link to="/tags" className="text-blue-500 hover:text-blue-600 ">
+          {" "}
+          popular tags.
+        </Link>
+      </h2>
     </section>
   );
 };

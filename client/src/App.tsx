@@ -45,6 +45,7 @@ function App() {
             <Route path="/users/:id" element={<UserProfile />} />
           </Route>
           <Route path="/questions/ask" element={<AskQuestion />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { voteThunk } from "../features/vote/voteApi";
 import { Vote } from "../interfaces/interfaces";
@@ -33,6 +34,7 @@ const Voting = ({ postId }: Props) => {
   const { user, token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
+  const navigate = useNavigate();
   const config = configAxios(token);
 
   useEffect(() => {
@@ -53,19 +55,22 @@ const Voting = ({ postId }: Props) => {
     };
     fetch();
   }, []);
-
   const sendVote = (type: VoteType_enum, position?: VoteType_enum) => {
+    if (!user) {
+      return navigate("/login");
+    }
+
     setVoteType(type);
     setInitialScore((prev) => {
-      if ((prev += type) === 0 || (prev -= type) === 0) {
-        prev = prev * 0;
+      if (voteType) prev += type;
+      if (type === VoteType_enum.downvote) {
+        return (prev += VoteType_enum.downvote);
+      } else if (type === VoteType_enum.upvote) {
+        return (prev += VoteType_enum.upvote);
+      } else {
+        if (position) return (prev += position);
       }
-      if (type === VoteType_enum.unvote && position) {
-        //todo: toggle between up and down doens't work
-        //todo: limit the size of the comments
-        return (prev = votes.score);
-      }
-      return (prev += type);
+      return (prev += 0);
     });
     dispatch(voteThunk({ postId, config, type }));
     setDisabled(true);
@@ -74,9 +79,6 @@ const Voting = ({ postId }: Props) => {
     }, 2000);
   };
 
-  let className = "text-orange-400";
-  if (loadingVotes || !user) return <></>;
-
   return (
     <div className="flex flex-col justify-start items-center text-[#aab0b4]">
       <ArrowUp
@@ -84,9 +86,7 @@ const Voting = ({ postId }: Props) => {
         voteType={voteType}
         disabled={disabled}
         sendVote={sendVote}
-        // id={id}
       />
-
       <span className="text-2xl block text-slate-600">{initialScore}</span>
       <ArrowDown
         setVoteType={setVoteType}

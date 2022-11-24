@@ -11,7 +11,6 @@ export const getQuestions = async (
 ) => {
   try {
     const { limit, skip } = request.query;
-    //todo: how to type this?
     let questions: any = QuestionModel.find();
 
     const questionsCount = await questions.clone().countDocuments();
@@ -39,7 +38,6 @@ export const getQuestion = async (request: Request, response: Response) => {
     const question = await QuestionModel.findOne({
       _id: request.params.id,
     }).populate("tags");
-    //todo: edit post does not work
     return response.json(question);
   } catch (error) {
     console.log(error);

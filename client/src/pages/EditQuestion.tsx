@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import QuestionForm from "../components/QuestionForm";
 import { getQuestionThunk } from "../features/question/questionApi";
@@ -8,6 +8,7 @@ const EditQuestion = () => {
   const params = useParams();
 
   const { question, loading } = useAppSelector((state) => state.question);
+  const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (params.id && !question) {
@@ -15,6 +16,7 @@ const EditQuestion = () => {
     }
   }, []);
 
+  if (!user) return <Navigate to="/" />;
   if (loading || !question) return <></>;
   const defaultValues = {
     title: question.title,

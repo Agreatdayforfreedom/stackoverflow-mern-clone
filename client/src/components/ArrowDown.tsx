@@ -17,7 +17,7 @@ interface Props {
 const ArrowDown = ({ voteType, disabled, sendVote }: Props) => {
   const handleVote = () => {
     if (voteType === -1) {
-      return sendVote(VoteType_enum.unvote, VoteType_enum.downvote);
+      return sendVote(VoteType_enum.unvote, VoteType_enum.upvote);
     }
     sendVote(VoteType_enum.downvote);
   };

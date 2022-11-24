@@ -10,6 +10,7 @@ export const getAnswers = async (request: Request, response: Response) => {
     const answers = await AnswerModel.find({
       question: request.params.id,
     }).populate("owner");
+
     return response.json(answers);
   } catch (error) {
     console.log(error);

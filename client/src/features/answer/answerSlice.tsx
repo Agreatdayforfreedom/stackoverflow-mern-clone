@@ -57,18 +57,11 @@ const answerSlice = createSlice({
     builder
       .addCase(getRelatedAnswersThunk.pending, (state) => {
         state.loading = true;
+        state.answers = [];
       })
       .addCase(getRelatedAnswersThunk.fulfilled, (state, action) => {
         state.answers = action.payload;
         state.loading = false;
-      });
-    builder
-      .addCase(createAnswerThunk.pending, (state, action) => {
-        state.loading = true;
-      })
-      .addCase(createAnswerThunk.fulfilled, (state, action) => {
-        state.loading = false;
-        state.answers = [...state.answers, action.payload];
       });
     builder
       .addCase(deleteAnswerThunk.pending, (state, action) => {

@@ -20,6 +20,7 @@ const AnswerForm = ({ answer }: Props) => {
   const { loading, questionId, token } = useAppSelector(
     (state) => state.answers
   );
+  const { user } = useAppSelector((state) => state.auth);
   const config = configAxios(token);
 
   const { form, handleChange, setForm } = useForm<{ content: string }>();

@@ -1,6 +1,6 @@
 import { nanoid } from "@reduxjs/toolkit";
 import React, { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   createAnswerThunk,
@@ -42,10 +42,11 @@ const Answers = () => {
 const PostAnswer = () => {
   const [fill, setFill] = useState(true);
 
-  const { token } = useAppSelector((state) => state.answers);
+  const { user, token } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   const params = useParams();
+  const navigate = useNavigate();
   const { handleChange, form } = useForm<{ content: string }>();
 
   const config = configAxios(token);
@@ -64,6 +65,7 @@ const PostAnswer = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!user) return navigate("/login");
     const payload = form;
     if (params.id) {
       dispatch(createAnswerThunk({ id: params.id, payload, config }));

@@ -28,13 +28,12 @@ const Answer = ({ answer }: Props) => {
   const handleDelete = () => {
     dispatch(deleteAnswerThunk({ id: answer._id, config }));
   };
-  if (!answer || loading || !user) return <Spinner />;
-  //todo: order answers
+  if (!answer || loading) return <Spinner />;
   return (
     <div className="flex w-full border-b border-slate-300 mt-5">
       <div className="flex flex-col">
         <Voting postId={answer._id && answer._id} />
-        {(question?.owner._id === user._id || answer.accepted) && (
+        {(question?.owner._id === user?._id || answer.accepted) && (
           <Accepted accepted={answer.accepted} id={answer._id} />
         )}
       </div>

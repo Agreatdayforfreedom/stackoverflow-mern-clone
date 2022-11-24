@@ -16,6 +16,7 @@ import {
 import { clearState } from "../features/question/questionSlice";
 import { Tag as ITag } from "../interfaces/interfaces";
 import { configAxios } from "../utils/configAxios";
+import { formatDate } from "../utils/formatDate";
 
 const Question = () => {
   const { question, loading, token } = useAppSelector(
@@ -46,7 +47,7 @@ const Question = () => {
     }
   };
 
-  if (loading || !question || loadingAuth || !user) return <></>;
+  if (loading || !question) return <></>;
   return (
     <section className="p-4 w-full">
       {/* header */}
@@ -54,10 +55,16 @@ const Question = () => {
         <h1 className="text-2xl text-gray-700">{question.title}</h1>
         <div className="flex pt-1">
           <p className="text-sm text-slate-600 px-2">
-            Asked <span className="text-black">today</span>
+            Asked{" "}
+            <span className="text-slate-800">
+              {formatDate(question.createdAt)}
+            </span>
           </p>
-          <p className="text-sm text-slate-700 px-2">
-            Modified <span className="text-black">today</span>
+          <p className="text-sm text-slate-600 px-2">
+            Modified{" "}
+            <span className="text-slate-800">
+              {formatDate(question.updatedAt)}
+            </span>
           </p>
           <p className="text-sm text-slate-700 px-2">
             Viewed <span className="text-black">23</span>
@@ -84,7 +91,7 @@ const Question = () => {
                 name="Edit"
                 className="text-sm text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all"
               />
-              {question.owner._id.toString() === user._id ? (
+              {question.owner._id.toString() === user?._id ? (
                 <button
                   onClick={handleRemove}
                   className="text-sm flex items-start text-slate-600 px-1 hover:cursor-pointer hover:text-slate-500 transition-all"
