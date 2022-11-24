@@ -62,6 +62,23 @@ export const getQuestionsByTagThunk = createAsyncThunk(
   }
 );
 
+export const getRelatedQuestionsThunk = createAsyncThunk(
+  "question/getRelatedQuestions",
+  async ({ id, limit }: Payload, { rejectWithValue }) => {
+    try {
+      const { data } = await axios(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/question/related/${id}?limit=${limit}`
+      );
+      console.log(data);
+      return data;
+    } catch (error) {
+      return rejectWithValue("error");
+    }
+  }
+);
+
 export const createQuestionThunk = createAsyncThunk(
   "question/createQuestion",
   async ({ payload, config }: Payload, { rejectWithValue }) => {

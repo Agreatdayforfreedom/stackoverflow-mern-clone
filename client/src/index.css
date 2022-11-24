@@ -185,4 +185,8 @@ body {
   outline: none;
   box-shadow: 0 0 0 4px rgba(0, 149, 255, 0.15);
 }
+
+.check {
+  clip-path: polygon(14% 43%, 0 66%, 55% 100%, 100% 17%, 77% 0%, 45% 66%);
+}
 /* /*  * */

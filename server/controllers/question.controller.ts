@@ -16,17 +16,17 @@ export const getQuestions = async (
 
     const questionsCount = await questions.clone().countDocuments();
     if (skip != "0") {
-      questions = questions.clone().skip(parseInt(skip, 10));
+      questions = questions.skip(parseInt(skip, 10));
     }
     if (limit != "0") {
-      questions = questions.clone().limit(parseInt(limit, 10));
+      questions = questions.limit(parseInt(limit, 10));
     }
     questions = await questions
-      .clone()
       .sort([["createdAt", -1]])
       .populate("votes")
       .populate("answers")
-      .populate("tags");
+      .populate("tags")
+      .populate("answerAccepted");
 
     response.json({ questionsCount, questions });
   } catch (error) {
@@ -59,13 +59,31 @@ export const getQuestionsByTag = async (
 
     const questionsCount = await questions.clone().countDocuments();
     if (skip != "0") {
-      questions = questions.clone().skip(parseInt(skip, 10));
+      questions = questions.skip(parseInt(skip, 10));
     }
     if (limit != "0") {
-      questions = questions.clone().limit(parseInt(limit, 10));
+      questions = questions.limit(parseInt(limit, 10));
     }
     questions = await questions.sort([["createdAt", -1]]).populate("tags");
     return response.json({ questionsCount, questions });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getRelatedQuestions = async (
+  request: Request<{ id: string }, {}, {}, { limit: string }>,
+  response: Response
+) => {
+  const { limit } = request.query;
+
+  try {
+    const questions = await QuestionModel.find({
+      owner: request.params.id,
+    })
+      .limit(parseInt(limit, 10) | 0)
+      .populate("votes");
+    return response.json(questions);
   } catch (error) {
     console.log(error);
   }

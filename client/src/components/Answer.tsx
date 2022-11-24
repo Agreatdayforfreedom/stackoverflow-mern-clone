@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { deleteAnswerThunk } from "../features/answer/answerApi";
+import {
+  acceptAnswerThunk,
+  deleteAnswerThunk,
+} from "../features/answer/answerApi";
 import { Answer as IAnswer } from "../interfaces/interfaces";
 import { configAxios } from "../utils/configAxios";
 import AuthLink from "./AuthLink";
@@ -17,6 +21,7 @@ const Answer = ({ answer }: Props) => {
   const { user, loading, token } = useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
+  const { question } = useAppSelector((state) => state.question);
 
   const config = configAxios(token);
 
@@ -24,10 +29,15 @@ const Answer = ({ answer }: Props) => {
     dispatch(deleteAnswerThunk({ id: answer._id, config }));
   };
   if (!answer || loading || !user) return <Spinner />;
-
+  //todo: order answers
   return (
     <div className="flex w-full border-b border-slate-300 mt-5">
-      <Voting postId={answer._id && answer._id} />
+      <div className="flex flex-col">
+        <Voting postId={answer._id && answer._id} />
+        {(question?.owner._id === user._id || answer.accepted) && (
+          <Accepted accepted={answer.accepted} id={answer._id} />
+        )}
+      </div>
       <div className="w-full px-4">
         <p className="break-all">{answer.content}</p>
         <div className="flex justify-between mt-4">
@@ -53,6 +63,30 @@ const Answer = ({ answer }: Props) => {
         </div>
         <CommentSection from={answer} type={"answer"} />
       </div>
+    </div>
+  );
+};
+
+const Accepted = ({ accepted, id }: { accepted: boolean; id: string }) => {
+  const [isAccepted, setIsAccepted] = useState(accepted);
+  const { token } = useAppSelector((state) => state.auth);
+
+  const config = configAxios(token);
+
+  const dispatch = useAppDispatch();
+  const handleAccept = () => {
+    setIsAccepted(true);
+
+    dispatch(acceptAnswerThunk({ id, config }));
+  };
+
+  return (
+    <div
+      className={`check w-8 h-8 ${
+        isAccepted ? "bg-[#3ab808]" : "bg-slate-400"
+      }`}
+    >
+      <button className="w-8 h-8" onClick={handleAccept}></button>
     </div>
   );
 };

@@ -16,10 +16,8 @@ commentRouter.get("/:id", async (request: Request, response: Response) => {
     });
 
     const commentsLength = await query.clone().countDocuments();
-    // query = await query.clone().limit(3);
     if (typeof limit === "string") {
       query = await query
-        .clone()
         .sort({ createdAt: "desc" })
         .limit(parseInt(limit, 10))
         .populate("owner", "-password");

@@ -8,6 +8,7 @@ interface Payload {
     content: string;
   };
   config?: Config;
+  limit?: number;
 }
 
 export const getAnswersThunk = createAsyncThunk(
@@ -39,6 +40,20 @@ export const getAnswerThunk = createAsyncThunk(
   }
 );
 
+export const getRelatedAnswersThunk = createAsyncThunk(
+  "answer/getRelatedAnswers",
+  async ({ id, limit }: Payload, { rejectWithValue }) => {
+    try {
+      const { data } = await axios(
+        `${import.meta.env.VITE_BACKEND_URL}/answer/related/${id}?${limit}`
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue("There was an problem, please try again");
+    }
+  }
+);
+
 export const createAnswerThunk = createAsyncThunk(
   "answer/createAnswer",
   async ({ id, payload, config }: Payload, { rejectWithValue }) => {
@@ -46,6 +61,22 @@ export const createAnswerThunk = createAsyncThunk(
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/answer/new/${id}`,
         payload,
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue("error");
+    }
+  }
+);
+
+export const acceptAnswerThunk = createAsyncThunk(
+  "answer/acceptAnswer",
+  async ({ id, config }: Payload, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/answer/accept/${id}`,
+        {},
         config
       );
       return data;

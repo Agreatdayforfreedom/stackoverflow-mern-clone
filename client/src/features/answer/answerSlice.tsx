@@ -5,6 +5,7 @@ import {
   deleteAnswerThunk,
   getAnswersThunk,
   getAnswerThunk,
+  getRelatedAnswersThunk,
 } from "./answerApi";
 
 interface InitialState {
@@ -29,6 +30,7 @@ const answerSlice = createSlice({
   name: "answer",
   initialState,
   reducers: {
+    clearState: () => initialState,
     setQuestionId: (state, action) => {
       state.questionId = action.payload;
     },
@@ -37,6 +39,7 @@ const answerSlice = createSlice({
     builder
       .addCase(getAnswersThunk.pending, (state) => {
         state.loading = true;
+        state.answers = [];
       })
       .addCase(getAnswersThunk.fulfilled, (state, action) => {
         state.answers = action.payload;
@@ -45,9 +48,18 @@ const answerSlice = createSlice({
     builder
       .addCase(getAnswerThunk.pending, (state) => {
         state.loading = true;
+        state.answer = undefined;
       })
       .addCase(getAnswerThunk.fulfilled, (state, action) => {
         state.answer = action.payload;
+        state.loading = false;
+      });
+    builder
+      .addCase(getRelatedAnswersThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getRelatedAnswersThunk.fulfilled, (state, action) => {
+        state.answers = action.payload;
         state.loading = false;
       });
     builder

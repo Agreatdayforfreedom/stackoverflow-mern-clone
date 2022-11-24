@@ -16,6 +16,7 @@ export interface Question {
   content: string;
   votes?: number;
   answers?: number;
+  answerAccepted?: number;
   tags: Array<Tag>;
   comments: Array<Comment>;
   owner: User; //user
@@ -28,7 +29,9 @@ export interface Answer {
   content: string;
   question: Question;
   comments: Array<Comment>;
+  votes?: number;
   owner: User;
+  accepted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

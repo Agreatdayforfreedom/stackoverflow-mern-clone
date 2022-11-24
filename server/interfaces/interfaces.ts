@@ -27,6 +27,7 @@ export interface Answer {
   content: string;
   question: Types.ObjectId;
   owner: Types.ObjectId;
+  accepted: boolean;
   comments: Types.DocumentArray<Comment>;
 }
 

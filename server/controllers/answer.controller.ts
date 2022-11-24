@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
+import mongoose, { HydratedDocument, Query } from "mongoose";
 import HttpException from "../exceptions/http.exception";
-import { Comment } from "../interfaces/interfaces";
+import { Answer, Comment } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import QuestionModel from "../models/Question.model";
 
@@ -26,6 +27,31 @@ export const getAnswer = async (request: Request, response: Response) => {
   }
 };
 
+export const getRelatedAnswers = async (
+  request: Request<
+    { id: string },
+    {},
+    {},
+    { limit: "string"; newest: "string" }
+  >,
+  response: Response
+) => {
+  try {
+    const { limit = "2" } = request.query;
+
+    let answers = await AnswerModel.find({
+      owner: request.params.id,
+    })
+      .populate("question")
+      .populate("votes")
+      .limit(parseInt(limit, 10) | 0);
+
+    return response.json(answers);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const sendAnswer = async (request: Request, response: Response) => {
   try {
     const question = await QuestionModel.findOne({ _id: request.params.id });
@@ -40,6 +66,28 @@ export const sendAnswer = async (request: Request, response: Response) => {
     const answerCreated = await answer.save();
     const _answerCreated = await answerCreated.populate("owner", "-password");
     response.status(201).json(_answerCreated);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const acceptAnswer = async (request: Request, response: Response) => {
+  try {
+    const { id } = request.params;
+
+    const answer = await AnswerModel.findOne({ _id: id });
+    if (!answer) return HttpException("There was a problem", 400, response);
+
+    const question = await QuestionModel.findOne({ _id: answer.question });
+    if (!question) return HttpException("There was a problem", 400, response);
+
+    if (!question.Authorized(request.user._id))
+      return HttpException("Not authorized", 401, response);
+
+    answer.accepted = true;
+
+    await answer.save();
+    return response.sendStatus(204);
   } catch (error) {
     console.log(error);
   }

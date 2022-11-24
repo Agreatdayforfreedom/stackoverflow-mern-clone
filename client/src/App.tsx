@@ -22,6 +22,8 @@ import Questions from "./pages/Questions";
 import SignUp from "./pages/SignUp";
 import Tagged from "./pages/Tagged";
 import Tags from "./pages/Tags";
+import UserProfile from "./pages/UserProfile";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
             <Route path="/tags" element={<Tags />} />
             <Route path="/edit-tag/:tagName" element={<EditTagInfo />} />
             <Route path="/questions" element={<Questions />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<UserProfile />} />
           </Route>
           <Route path="/questions/ask" element={<AskQuestion />} />
         </Route>

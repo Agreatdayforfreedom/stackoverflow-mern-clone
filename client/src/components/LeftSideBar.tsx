@@ -64,13 +64,16 @@ const SideBar = () => {
                 Tags
               </Link>
             </li>
-            <li
-              className={`py-2 px-8 hover:text-black hover:cursor-pointer ${
-                path === "/users" &&
-                "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
-              }`}
-            >
-              Users
+            <li>
+              <Link
+                to="/users"
+                className={`inline-block w-full py-2 px-8 hover:text-black hover:cursor-pointer ${
+                  path.includes("/users") &&
+                  "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
+                }`}
+              >
+                Users
+              </Link>
             </li>
             {/* </div> */}
           </ul>

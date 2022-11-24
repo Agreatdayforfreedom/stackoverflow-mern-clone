@@ -5,6 +5,7 @@ import commentSlice from "../features/comment/commentSlice";
 import voteSlice from "../features/vote/voteSlice";
 import answerSlice from "../features/answer/answerSlice";
 import tagSlice from "../features/tag/tagSlice";
+import userSlice from "../features/user/userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     votes: voteSlice,
     answers: answerSlice,
     tag: tagSlice,
+    user: userSlice,
   },
 });
 

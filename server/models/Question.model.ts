@@ -55,6 +55,14 @@ questionSchema.virtual("answers", {
   count: true,
 });
 
+questionSchema.virtual("answerAccepted", {
+  ref: "Answer",
+  localField: "_id",
+  foreignField: "question",
+  match: { accepted: true },
+  count: true,
+});
+
 export default mongoose.model<Question, QuestionModel>(
   "Question",
   questionSchema

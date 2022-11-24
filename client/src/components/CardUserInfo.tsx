@@ -1,28 +1,38 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Answer, Question, User } from "../interfaces/interfaces";
 import { formatDate } from "../utils/formatDate";
 
 interface Props {
   user: User;
-  from: Question | Answer;
+  from?: Question | Answer | "";
+  date?: boolean;
+  image?: string;
 }
 
-const CardUserInfo = ({ user, from }: Props) => {
+const CardUserInfo = ({ user, from = "", date = true, image }: Props) => {
   return (
     <div
-      className={`w-48 ${"title" in from && "bg-blue-200 px-2 py-1 rounded"}`}
+      className={`w-48 ${
+        from && "title" in from && "bg-blue-200 px-2 py-1 rounded"
+      }`}
     >
-      <p className="text-xs text-slate-600">{formatDate(from.createdAt)}</p>
+      {date && from && (
+        <p className="text-xs text-slate-600">{formatDate(from.createdAt)}</p>
+      )}
       <div className="flex ">
         <img
           src={user.avatar}
-          className="w-8 h-8 rounded mt-1"
+          className={`${image && image} w-8 h-8 rounded mt-1`}
           alt={`${user.username} avatar`}
         />
         <div className="px-2 flex flex-col">
-          <span className="text-blue-500 align-top w-fit text-sm">
+          <Link
+            to={`/users/${user._id}`}
+            className="text-blue-500 align-top w-fit text-sm"
+          >
             {user.username}
-          </span>
+          </Link>
           <span className="text-sm font-bold text-slate-600">
             {user.reputation}
           </span>

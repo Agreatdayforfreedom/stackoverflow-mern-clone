@@ -6,6 +6,7 @@ import {
   getQuestionsByTagThunk,
   getQuestionsThunk,
   getQuestionThunk,
+  getRelatedQuestionsThunk,
   removeQuestionThunk,
 } from "./questionApi";
 
@@ -65,6 +66,15 @@ export const questionSlice = createSlice({
         state.loading = false;
         state.questions = action.payload.questions;
         state.total = action.payload.questionsCount;
+      });
+    builder
+      .addCase(getRelatedQuestionsThunk.pending, (state) => {
+        state.loading = true;
+        state.questions = [];
+      })
+      .addCase(getRelatedQuestionsThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.questions = action.payload;
       });
     builder
       .addCase(createQuestionThunk.pending, (state) => {

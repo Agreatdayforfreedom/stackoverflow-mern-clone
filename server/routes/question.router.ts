@@ -6,6 +6,7 @@ import {
   newQuestion,
   updateQuestion,
   getQuestionsByTag,
+  getRelatedQuestions,
 } from "../controllers/question.controller";
 import checkAuth from "../middlewares/checkAuth";
 
@@ -15,6 +16,7 @@ questionRouter.get("/", getQuestions);
 questionRouter.get("/top", getQuestions);
 questionRouter.get("/:id", getQuestion);
 questionRouter.get("/tag/:id", getQuestionsByTag);
+questionRouter.get("/related/:id", getRelatedQuestions);
 questionRouter.post("/new", checkAuth, newQuestion);
 questionRouter.put("/update/:id", checkAuth, updateQuestion);
 questionRouter.delete("/delete/:id", checkAuth, deleteQuestion);
