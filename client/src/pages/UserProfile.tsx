@@ -11,6 +11,7 @@ import { Answer, Question } from "../interfaces/interfaces";
 import { getRelatedQuestionsThunk } from "../features/question/questionApi";
 import { getRelatedAnswersThunk } from "../features/answer/answerApi";
 import { nanoid } from "@reduxjs/toolkit";
+import Blank from "../components/Blank";
 
 interface Post {
   _id: string;
@@ -52,7 +53,8 @@ const UserProfile = () => {
     }
   }, [questions, answers]);
 
-  if (loading || !userInfo || loadingAnswer || loadingQuestion) return <></>;
+  if (loading || !userInfo || loadingAnswer || loadingQuestion)
+    return <Blank />;
   return (
     <section className="p-6">
       <div>

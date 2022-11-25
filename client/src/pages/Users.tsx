@@ -2,6 +2,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import Blank from "../components/Blank";
 import CardUserInfo from "../components/CardUserInfo";
 import Pagination from "../components/Pagination";
 import { getUsersThunk } from "../features/user/userApi";
@@ -27,7 +28,7 @@ const Users = () => {
     }
   }, [currentQueryParameters]);
 
-  if (loading) return <></>;
+  if (loading) return <Blank />;
   return (
     <section>
       <div className="p-5 ">

@@ -10,7 +10,9 @@ import { setQuestionId } from "../features/answer/answerSlice";
 import { useForm } from "../hooks/useForm";
 import { configAxios } from "../utils/configAxios";
 import Answer from "./Answer";
+import Blank from "./Blank";
 import Button from "./Button";
+import { Spinner } from "./Spinner";
 
 const Answers = () => {
   const { answers } = useAppSelector((state) => state.answers);
@@ -43,6 +45,7 @@ const PostAnswer = () => {
   const [fill, setFill] = useState(true);
 
   const { user, token } = useAppSelector((state) => state.auth);
+  const { loading } = useAppSelector((state) => state.answers);
   const dispatch = useAppDispatch();
 
   const params = useParams();
@@ -72,6 +75,7 @@ const PostAnswer = () => {
     }
   };
 
+  if (loading) return <Blank />;
   return (
     <div className="p-2 mt-5">
       <h2 className=" text-lg">Your Answer</h2>

@@ -3,9 +3,10 @@ import { Types } from "mongoose";
 import HttpException from "../exceptions/http.exception";
 import checkAuth from "../middlewares/checkAuth";
 import AnswerModel from "../models/Answer.model";
-import QuestionModel from "../models/Question.model";
+import { User } from "../interfaces/interfaces";
 import UserModel from "../models/User.model";
 import VotesModel, { Vote, VoteType_enum } from "../models/Votes.model";
+import QuestionModel from "../models/Question.model";
 
 const voteRouter = Router();
 
@@ -42,6 +43,33 @@ async function query(
   response: Response,
   vote: number
 ) {
+  const { position } = request.body;
+
+  const userReputation = await UserModel.findOne({ _id: request.user._id });
+  const postA = await AnswerModel.findOne({ _id: postId });
+  const postQ = await QuestionModel.findOne({ _id: postId });
+
+  let post = postA || postQ;
+
+  if (!userReputation || !post)
+    return HttpException("Something is wrong!", 400, response);
+
+  const ownerPost = await UserModel.findOne({ _id: post.owner });
+
+  if (!ownerPost) return HttpException("Something is wrong!", 400, response);
+  const alreadyVoted = await VotesModel.findOne({
+    voter: request.user._id,
+    voteTo: post._id,
+  });
+
+  if (vote === VoteType_enum.downvote && userReputation.reputation < 125) {
+    return HttpException("You need at least 125 reputation", 401, response);
+  } else if (vote === VoteType_enum.upvote && userReputation.reputation < 25) {
+    return HttpException("You need at least 25 reputation", 401, response);
+  }
+
+  //check if it are voted and therefore rest or sum reputation
+
   // is there vote? then delete it;
   //if not, continue
   //if vote is type 0 delete it and return
@@ -50,6 +78,16 @@ async function query(
     voter: request.user._id,
   });
   if (vote === VoteType_enum.unvote) {
+    //request.body.position is the inverse
+    const posCorrected = position * -1;
+
+    if (posCorrected === VoteType_enum.downvote) {
+      ownerPost.reputation = ownerPost.reputation += 2;
+    } else if (posCorrected === VoteType_enum.upvote) {
+      ownerPost.reputation = ownerPost.reputation -= 10;
+    }
+    await ownerPost.save();
+
     return HttpException("ok", 200, response);
   }
   const newVote = new VotesModel();
@@ -58,7 +96,26 @@ async function query(
   newVote.voteTo = postId;
   newVote.vote = vote;
 
-  const voted = await newVote.save();
+  if (alreadyVoted && !position) {
+    if (alreadyVoted.vote === VoteType_enum.downvote) {
+      ownerPost.reputation = ownerPost.reputation += 2;
+    } else if (alreadyVoted.vote === VoteType_enum.upvote) {
+      ownerPost.reputation = ownerPost.reputation -= 10;
+    }
+  }
+
+  if (vote === VoteType_enum.downvote) {
+    //request.body.position is the inverse
+    ownerPost.reputation = ownerPost.reputation -= 2;
+  } else if (vote === VoteType_enum.upvote) {
+    ownerPost.reputation = ownerPost.reputation += 10;
+  }
+
+  console.log(ownerPost.reputation, 2);
+  const [voted, _] = await Promise.all([
+    await newVote.save(),
+    await ownerPost.save(),
+  ]);
   return response.json(voted);
 }
 

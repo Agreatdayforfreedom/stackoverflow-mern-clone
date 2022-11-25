@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import Blank from "../components/Blank";
 import QuestionForm from "../components/QuestionForm";
 import { getQuestionThunk } from "../features/question/questionApi";
 
@@ -17,7 +18,7 @@ const EditQuestion = () => {
   }, []);
 
   if (!user) return <Navigate to="/" />;
-  if (loading || !question) return <></>;
+  if (loading || !question) return <Blank />;
   const defaultValues = {
     title: question.title,
     content: question.content,

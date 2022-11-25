@@ -5,6 +5,7 @@ import { Answer, Comment } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import CommentModel from "../models/Comment.model";
 import QuestionModel from "../models/Question.model";
+import UserModel from "../models/User.model";
 
 export const getAnswers = async (request: Request, response: Response) => {
   try {
@@ -76,19 +77,28 @@ export const sendAnswer = async (request: Request, response: Response) => {
 export const acceptAnswer = async (request: Request, response: Response) => {
   try {
     const { id } = request.params;
-
     const answer = await AnswerModel.findOne({ _id: id });
     if (!answer) return HttpException("There was a problem", 400, response);
 
+    const ownerPost = await UserModel.findOne({ _id: answer.owner });
+
     const question = await QuestionModel.findOne({ _id: answer.question });
-    if (!question) return HttpException("There was a problem", 400, response);
+    if (!question || !ownerPost)
+      return HttpException("There was a problem", 400, response);
 
     if (!question.Authorized(request.user._id))
       return HttpException("Not authorized", 401, response);
 
-    answer.accepted = true;
+    if (answer.accepted === true) {
+      answer.accepted = false;
+      ownerPost.reputation = ownerPost.reputation -= 15;
+    } else {
+      answer.accepted = true;
+      ownerPost.reputation = ownerPost.reputation += 15;
+    }
 
-    await answer.save();
+    await Promise.all([await answer.save(), await ownerPost.save()]);
+
     return response.sendStatus(204);
   } catch (error) {
     console.log(error);

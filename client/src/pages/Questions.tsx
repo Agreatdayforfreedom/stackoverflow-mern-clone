@@ -2,6 +2,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import Blank from "../components/Blank";
 import Pagination from "../components/Pagination";
 import QuestionCard from "../components/QuestionCard";
 import { getQuestionsThunk } from "../features/question/questionApi";
@@ -32,7 +33,7 @@ const Questions = () => {
     }
   }, [currentQueryParameters]);
 
-  if (loading) return <></>;
+  if (loading) return <Blank />;
   return (
     <section className="mt-5 w-full flex flex-col">
       <div className="flex justify-between mt-2 mb-1">

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import AuthLink from "../components/AuthLink";
+import Blank from "../components/Blank";
 import Pagination from "../components/Pagination";
 import QuestionCard from "../components/QuestionCard";
 import { Spinner } from "../components/Spinner";
@@ -40,7 +41,7 @@ const Tagged = () => {
       setSkip(parseInt(currentQueryParameters.get("skip")!, 10));
     }
   }, [currentQueryParameters]);
-  if (!tag || loadingTag || loading) return <></>;
+  if (!tag || loadingTag || loading) return <Blank />;
   return (
     <div>
       <div>

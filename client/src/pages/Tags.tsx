@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import Blank from "../components/Blank";
 import Pagination from "../components/Pagination";
 import Tag from "../components/Tag";
 import { getTagsThunk } from "../features/tag/tagApi";
@@ -32,7 +33,7 @@ const Tags = () => {
     }
   }, [currentQueryParameters]);
 
-  if (loading) return <></>;
+  if (loading) return <Blank />;
   return (
     <>
       <div className="p-5 ">

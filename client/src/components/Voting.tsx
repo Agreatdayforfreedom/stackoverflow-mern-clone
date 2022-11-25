@@ -7,6 +7,7 @@ import { Vote } from "../interfaces/interfaces";
 import { configAxios } from "../utils/configAxios";
 import ArrowDown from "./ArrowDown";
 import ArrowUp from "./ArrowUp";
+import Blank from "./Blank";
 
 export enum VoteType_enum {
   upvote = 1,
@@ -40,17 +41,11 @@ const Voting = ({ postId }: Props) => {
   useEffect(() => {
     const fetch = async () => {
       const { data } = await axios(`http://localhost:4000/api/vote/${postId}`);
-
       if (data) {
-        const voteType = data.votes.filter(
-          (v: Vote) => v.voter.toString() === user?._id.toString()
-        )[0];
-        if (voteType) {
-          setVoteType(voteType.vote);
-        }
+        if (data.votes[0]) setVoteType(data.votes[0].vote);
         setInitialScore(data.score);
-        setLoadingVotes(false);
         setVotes(data);
+        setLoadingVotes(false);
       }
     };
     fetch();
@@ -72,13 +67,14 @@ const Voting = ({ postId }: Props) => {
       }
       return (prev += 0);
     });
-    dispatch(voteThunk({ postId, config, type }));
+    dispatch(voteThunk({ postId, config, type, position }));
     setDisabled(true);
     setTimeout(() => {
       setDisabled(false);
     }, 2000);
   };
 
+  if (loadingVotes) return <Blank />;
   return (
     <div className="flex flex-col justify-start items-center text-[#aab0b4]">
       <ArrowUp

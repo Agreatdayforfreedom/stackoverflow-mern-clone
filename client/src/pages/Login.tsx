@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { authThunk, loginThunk } from "../features/auth/authApi";
 import { hideError, showError } from "../features/auth/authSlice";
 import { FaCubes } from "react-icons/fa";
+import Blank from "../components/Blank";
 
 const Login = () => {
   const [findBy, setFindBy] = useState("");
@@ -29,7 +30,7 @@ const Login = () => {
 
     dispatch(loginThunk({ findBy, password }));
   };
-  if (loading) return <></>;
+  if (loading) return <Blank />;
   if (user) return <Navigate to="/" />;
   return (
     <main className="flex items-center justify-center h-screen">

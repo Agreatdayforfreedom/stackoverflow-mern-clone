@@ -63,7 +63,12 @@ export const getQuestionsByTag = async (
     if (limit != "0") {
       questions = questions.limit(parseInt(limit, 10));
     }
-    questions = await questions.sort([["createdAt", -1]]).populate("tags");
+    questions = await questions
+      .sort([["createdAt", -1]])
+      .populate("votes")
+      .populate("answers")
+      .populate("tags")
+      .populate("answerAccepted");
     return response.json({ questionsCount, questions });
   } catch (error) {
     console.log(error);

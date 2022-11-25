@@ -3,12 +3,13 @@ import { FaCubes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { logout } from "../features/auth/authSlice";
+import Blank from "./Blank";
 
 const Header = () => {
   const dispatch = useAppDispatch();
   const { user, loading } = useAppSelector((state) => state.auth);
 
-  if (loading) return <></>;
+  if (loading) return <Blank />;
   return (
     <header className="z-20 bg-white flex justify-between h-[50px] items-center shadow-lg fixed top-0 w-full">
       <div className="flex mx-3 items-center">

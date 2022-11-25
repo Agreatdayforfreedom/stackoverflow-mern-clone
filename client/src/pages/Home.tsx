@@ -1,13 +1,13 @@
 import { nanoid } from "@reduxjs/toolkit";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import Blank from "../components/Blank";
 import QuestionCard from "../components/QuestionCard";
-import { Spinner } from "../components/Spinner";
-import Tag from "../components/Tag";
+
 import { getQuestionsThunk } from "../features/question/questionApi";
 import { clearState } from "../features/question/questionSlice";
-import { Question, Tag as ITag } from "../interfaces/interfaces";
+import { Question } from "../interfaces/interfaces";
 
 const Home = () => {
   const { questions, loading } = useAppSelector((state) => state.question);
@@ -19,7 +19,7 @@ const Home = () => {
     dispatch(getQuestionsThunk({ limit: 20 }));
   }, []);
 
-  if (loading) return <></>;
+  if (loading) return <Blank />;
   return (
     <section className="mt-5 w-full flex flex-col">
       <div className="flex justify-between mt-2 mb-5">

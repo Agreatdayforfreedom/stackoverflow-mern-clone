@@ -18,6 +18,8 @@ import { configAxios } from "../utils/configAxios";
 import { useForm } from "../hooks/useForm";
 import axios from "axios";
 import { CommentStatus_enum } from "../features/comment/commentSlice";
+import { Spinner } from "./Spinner";
+import Blank from "./Blank";
 
 enum Limit_enum {
   initial = 3,
@@ -135,7 +137,7 @@ const CommentSection = ({ from, type }: PropsCS) => {
     setShowMore(0);
   };
 
-  if (loading || !comments) return <></>;
+  if (loading || !comments) return <Blank />;
   return (
     <>
       <div className="mt-5">
@@ -215,7 +217,7 @@ const CommentCard = ({ comment, setForm, setToggleComment }: PropsComment) => {
     dispatch(deleteCommentThunk({ id: comment._id, config }));
   };
 
-  if (!comment || !user) return <></>;
+  if (!comment || !user) return <Blank />;
   return (
     <div className="flex border-b border-gray-300 py-1 px-2 text-sm first-of-type:border-y hover-div:block">
       <p className="break-all">

@@ -40,7 +40,7 @@ body {
 }
 
 .wrap_spinner {
-  position: absolute;
+  position: fixed;
   width: fit-content;
   left: 0;
   right: 0;

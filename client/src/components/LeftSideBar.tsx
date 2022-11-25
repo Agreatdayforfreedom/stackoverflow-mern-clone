@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { BiWorld } from "react-icons/bi";
 
@@ -6,7 +6,7 @@ const LeftSideBar = () => {
   return (
     <div className="mt-7 flex h-full relative">
       <SideBar />
-      <main className="m-0 sm:ml-40 w-full">
+      <main className="relative m-0 sm:ml-40 w-full">
         <Outlet />
       </main>
     </div>

@@ -6,6 +6,7 @@ interface Payload {
   postId: string;
   config: Config;
   type: number;
+  position?: number;
 }
 
 export const getVotesThunk = createAsyncThunk(
@@ -18,11 +19,10 @@ export const getVotesThunk = createAsyncThunk(
 
 export const voteThunk = createAsyncThunk(
   "vote/vote",
-  async ({ postId, config, type }: Payload) => {
-    console.log(postId, type);
+  async ({ postId, config, type, position }: Payload) => {
     const { data } = await axios.put(
       `${import.meta.env.VITE_BACKEND_URL}/vote/${postId}/${type}`,
-      {},
+      { position },
       config
     );
 

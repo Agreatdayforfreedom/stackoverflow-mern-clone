@@ -64,6 +64,14 @@ const answerSlice = createSlice({
         state.loading = false;
       });
     builder
+      .addCase(createAnswerThunk.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(createAnswerThunk.fulfilled, (state, action) => {
+        state.answers.push(action.payload);
+        state.loading = false;
+      });
+    builder
       .addCase(deleteAnswerThunk.pending, (state, action) => {
         state.loading = true;
       })

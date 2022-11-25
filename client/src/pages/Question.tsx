@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Answers from "../components/Answers";
 import AuthLink from "../components/AuthLink";
+import Blank from "../components/Blank";
 import CardUserInfo from "../components/CardUserInfo";
 import CommentSection from "../components/CommentSection";
 import { Spinner } from "../components/Spinner";
@@ -47,7 +48,7 @@ const Question = () => {
     }
   };
 
-  if (loading || !question) return <></>;
+  if (loading || !question) return <Blank />;
   return (
     <section className="p-4 w-full">
       {/* header */}

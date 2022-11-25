@@ -1,8 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { Vote } from "../interfaces/interfaces";
-import { configAxios } from "../utils/configAxios";
 import { VoteType_enum } from "./Voting";
 
 interface Props {

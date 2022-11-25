@@ -24,11 +24,10 @@ const Answer = ({ answer }: Props) => {
   const { question } = useAppSelector((state) => state.question);
 
   const config = configAxios(token);
-
+  //cache the answer after creating it does not work
   const handleDelete = () => {
     dispatch(deleteAnswerThunk({ id: answer._id, config }));
   };
-  if (!answer || loading) return <Spinner />;
   return (
     <div className="flex w-full border-b border-slate-300 mt-5">
       <div className="flex flex-col">
@@ -74,7 +73,7 @@ const Accepted = ({ accepted, id }: { accepted: boolean; id: string }) => {
 
   const dispatch = useAppDispatch();
   const handleAccept = () => {
-    setIsAccepted(true);
+    setIsAccepted((prev) => !prev);
 
     dispatch(acceptAnswerThunk({ id, config }));
   };
