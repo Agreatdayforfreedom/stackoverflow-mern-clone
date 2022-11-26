@@ -25,10 +25,10 @@ const QuestionCard = ({ question }: Props) => {
           } flex text-sm text-slate-600 items-center`}
         >
           {question.answerAccepted! > 0 && (
-            <span className="check w-4 h-4 bg-slate-200 mx-0.5"></span>
+            <span className="check w-4 h-4 translate-y-[2px] bg-slate-200 mx-1"></span>
           )}
           <span className="pr-1">{question.answers}</span>
-          answers
+          {question.answers! > 1 ? <span> answers</span> : <span>answer</span>}
         </div>
         <p className="flex text-sm text-slate-600 py-1">
           <span className="px-1">0</span> views

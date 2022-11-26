@@ -84,6 +84,6 @@ const answerSlice = createSlice({
   },
 });
 
-export const { setQuestionId } = answerSlice.actions;
+export const { setQuestionId, clearState } = answerSlice.actions;
 
 export default answerSlice.reducer;

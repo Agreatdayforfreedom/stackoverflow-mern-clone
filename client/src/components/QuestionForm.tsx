@@ -7,6 +7,7 @@ import {
   editQuestionThunk,
 } from "../features/question/questionApi";
 import { clearState } from "../features/question/questionSlice";
+import { clearState as clearAnswerState } from "../features/answer/answerSlice";
 import { useForm } from "../hooks/useForm";
 import { configAxios } from "../utils/configAxios";
 
@@ -81,21 +82,20 @@ const QuestionForm = ({ defaultValues, id }: Props) => {
       tags,
     };
     if (id) {
+      dispatch(clearAnswerState());
       dispatch(editQuestionThunk({ payload, id, config }));
       if (question) {
         navigate(`/questions/${question._id}`);
       }
     } else {
+      dispatch(clearAnswerState());
+
       dispatch(createQuestionThunk({ payload, config }));
     }
   };
 
-  const show = () => {
-    console.log(question);
-  };
   return (
     <form className="m-4" onSubmit={handleSubmit}>
-      <button onClick={show}>show</button>
       <div className="flex flex-col bg-white border rounded border-slate-400 my-5 p-5">
         <label htmlFor="title" className="font-semibold text-slate-700 text-lg">
           Title

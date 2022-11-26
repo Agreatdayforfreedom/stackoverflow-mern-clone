@@ -1,84 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { BiWorld } from "react-icons/bi";
+import { SideBar } from "./SideBar";
 
 const LeftSideBar = () => {
   return (
     <div className="mt-7 flex h-full relative">
-      <SideBar />
+      <div className="fixed overflow-x-hidden w-40 h-screen hidden sm:block border-r border-slate-400">
+        <SideBar />
+      </div>
+
       <main className="relative m-0 sm:ml-40 w-full">
         <Outlet />
       </main>
-    </div>
-  );
-};
-
-const SideBar = () => {
-  const [path, setPath] = useState<string>("");
-  const location = useLocation();
-  useEffect(() => {
-    setPath(location.pathname);
-  }, [location]);
-
-  return (
-    <div className="fixed overflow-x-hidden w-40 h-screen hidden sm:block border-r border-slate-400">
-      <div className="flex justify-end mt-6">
-        <nav className="w-full">
-          <ul className="text-sm text-slate-500">
-            <li>
-              <Link
-                to="/"
-                className={`inline-block w-full p-2 hover:text-black hover:cursor-pointer ${
-                  path === "/" &&
-                  "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
-                }`}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <p className="text-slate-500 p-2 uppercase text-xs">public</p>
-            </li>
-            <li>
-              <Link
-                to="/questions"
-                className={`flex items-center py-2  hover:text-black hover:cursor-pointer ${
-                  path.includes("/questions") &&
-                  "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
-                }`}
-              >
-                <span>
-                  <BiWorld size={20} className="ml-2 mr-1" />
-                </span>
-                Questions
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/tags"
-                className={`inline-block w-full py-2 px-8 hover:text-black hover:cursor-pointer" ${
-                  path === "/tags" &&
-                  "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
-                }`}
-              >
-                Tags
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/users"
-                className={`inline-block w-full py-2 px-8 hover:text-black hover:cursor-pointer ${
-                  path.includes("/users") &&
-                  "bg-gray-300 border-r-4 border-orange-400 font-bold text-black"
-                }`}
-              >
-                Users
-              </Link>
-            </li>
-            {/* </div> */}
-          </ul>
-        </nav>
-      </div>
     </div>
   );
 };

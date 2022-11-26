@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
-import { Tag } from "../interfaces/interfaces";
+import { Answer, Tag } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import CommentModel from "../models/Comment.model";
 import QuestionModel from "../models/Question.model";
@@ -145,14 +145,12 @@ async function mergeTag(tags: string[]) {
 
 export const updateQuestion = async (request: Request, response: Response) => {
   const { title, content, tags } = request.body;
-  console.log({ title, content, tags });
   try {
     const question = await QuestionModel.findOne({ _id: request.params.id });
     if (!question) return HttpException("Question not found", 404, response);
 
     question.title = title || question.title;
     question.content = content || question.content;
-    console.log(question.comments);
 
     const uniqueTags = await mergeTag(tags);
     const questionTagIds = question.tags.map((x) => x._id.toString());
@@ -170,14 +168,22 @@ export const updateQuestion = async (request: Request, response: Response) => {
     }
 
     if (uniqueTags) {
-      await QuestionModel.updateOne(
-        { _id: question._id },
-        { $addToSet: { tags: { $each: [...newTag] } } }
-      );
+      const updated = await QuestionModel.findByIdAndUpdate(
+        question._id,
+        {
+          $set: { title, content },
+          $addToSet: { tags: { $each: [...newTag] } },
+        },
+        { returnDocument: "after" }
+      )
+        .populate("tags")
+        .populate("owner");
+
+      // const questionSaved = await question.save();
+      // const _questionPopulated = await updated.populate("tags");
+      console.log(updated);
+      response.json(updated);
     }
-    const questionSaved = await question.save();
-    const _questionPopulated = await questionSaved.populate("tags");
-    response.json(_questionPopulated);
   } catch (error) {
     console.log(error);
   }

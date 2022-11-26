@@ -56,8 +56,8 @@ export const authSlice = createSlice({
       });
     builder
       .addCase(signupThunk.pending, (state, action) => {
+        state.user = undefined;
         state.loading = true;
-        state.error = undefined;
       })
       .addCase(signupThunk.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -70,6 +70,7 @@ export const authSlice = createSlice({
     builder
       .addCase(authThunk.pending, (state, action) => {
         state.loading = true;
+        state.user = undefined;
       })
       .addCase(authThunk.fulfilled, (state, action) => {
         state.user = action.payload;

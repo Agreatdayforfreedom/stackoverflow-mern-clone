@@ -22,9 +22,7 @@ const Questions = () => {
 
   useEffect(() => {
     dispatch(clearState());
-    setTimeout(() => {
-      dispatch(getQuestionsThunk({ limit, skip }));
-    }, 100);
+    dispatch(getQuestionsThunk({ limit, skip }));
   }, [skip, limit]);
 
   useEffect(() => {

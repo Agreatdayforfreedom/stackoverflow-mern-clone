@@ -25,7 +25,7 @@ const Tags = () => {
       dispatch(getTagsThunk({ skip }));
     };
     fetch();
-  }, []);
+  }, [skip]);
 
   useEffect(() => {
     if (currentQueryParameters.get("skip")) {

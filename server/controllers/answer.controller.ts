@@ -9,7 +9,7 @@ import UserModel from "../models/User.model";
 
 export const getAnswers = async (request: Request, response: Response) => {
   try {
-    const answers = await AnswerModel.find({
+    let answers = await AnswerModel.find({
       question: request.params.id,
     }).populate("owner");
 

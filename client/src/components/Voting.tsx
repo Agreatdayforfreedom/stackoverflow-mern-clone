@@ -9,6 +9,9 @@ import ArrowDown from "./ArrowDown";
 import ArrowUp from "./ArrowUp";
 import Blank from "./Blank";
 
+//todo: limit answers
+//todo: pagination tags does not work
+
 export enum VoteType_enum {
   upvote = 1,
   downvote = -1,
@@ -17,6 +20,7 @@ export enum VoteType_enum {
 
 interface Props {
   postId: string;
+  ownerId: string;
 }
 
 interface Votes {
@@ -25,14 +29,14 @@ interface Votes {
   votes: Vote[];
 }
 
-const Voting = ({ postId }: Props) => {
+const Voting = ({ postId, ownerId }: Props) => {
   const [voteType, setVoteType] = useState<number>(VoteType_enum.unvote);
   const [votes, setVotes] = useState<Votes>({} as Votes);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [initialScore, setInitialScore] = useState<number>(0);
   const [loadingVotes, setLoadingVotes] = useState(true);
 
-  const { user, token } = useAppSelector((state) => state.auth);
+  const { user, token, loading } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -42,7 +46,10 @@ const Voting = ({ postId }: Props) => {
     const fetch = async () => {
       const { data } = await axios(`http://localhost:4000/api/vote/${postId}`);
       if (data) {
-        if (data.votes[0]) setVoteType(data.votes[0].vote);
+        const votedType = data.votes.filter(
+          (v: Vote) => v.voter === user?._id
+        )[0];
+        if (votedType) setVoteType(votedType.vote);
         setInitialScore(data.score);
         setVotes(data);
         setLoadingVotes(false);
@@ -54,7 +61,15 @@ const Voting = ({ postId }: Props) => {
     if (!user) {
       return navigate("/login");
     }
-
+    if (user._id === ownerId) {
+      return alert("you cannot vote your own post");
+    }
+    if (type === VoteType_enum.downvote && user.reputation < 125) {
+      return alert("you should at least 125 of reputation");
+    }
+    if (type === VoteType_enum.upvote && user.reputation < 25) {
+      return alert("you should at least 25 of reputation");
+    }
     setVoteType(type);
     setInitialScore((prev) => {
       if (voteType) prev += type;
@@ -74,7 +89,7 @@ const Voting = ({ postId }: Props) => {
     }, 2000);
   };
 
-  if (loadingVotes) return <Blank />;
+  if (loadingVotes || loading) return <Blank />;
   return (
     <div className="flex flex-col justify-start items-center text-[#aab0b4]">
       <ArrowUp

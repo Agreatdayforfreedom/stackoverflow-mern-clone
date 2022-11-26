@@ -62,6 +62,10 @@ async function query(
     voteTo: post._id,
   });
 
+  if (ownerPost._id.equals(request.user._id)) {
+    return HttpException("You cannot vote your own post", 401, response);
+  }
+
   if (vote === VoteType_enum.downvote && userReputation.reputation < 125) {
     return HttpException("You need at least 125 reputation", 401, response);
   } else if (vote === VoteType_enum.upvote && userReputation.reputation < 25) {

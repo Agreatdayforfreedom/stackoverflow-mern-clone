@@ -15,11 +15,14 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(clearState());
-
     dispatch(getQuestionsThunk({ limit: 20 }));
   }, []);
 
-  if (loading) return <Blank />;
+  useEffect(() => {
+    console.log({ questions });
+  }, [questions]);
+
+  if (loading || !questions) return <Blank />;
   return (
     <section className="mt-5 w-full flex flex-col">
       <div className="flex justify-between mt-2 mb-5">

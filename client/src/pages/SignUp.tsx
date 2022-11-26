@@ -4,6 +4,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { signupThunk } from "../features/auth/authApi";
 import { hideError, showError } from "../features/auth/authSlice";
+import { clearState } from "../features/question/questionSlice";
 
 const SignUp = () => {
   const { user, loading, error } = useAppSelector((state) => state.auth);
@@ -27,7 +28,7 @@ const SignUp = () => {
     if ([username, email, password].includes("")) {
       return dispatch(showError("All fields are required"));
     }
-
+    dispatch(clearState());
     dispatch(
       signupThunk({
         username,

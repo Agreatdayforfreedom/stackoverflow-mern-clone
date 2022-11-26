@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
@@ -31,7 +31,7 @@ const Answer = ({ answer }: Props) => {
   return (
     <div className="flex w-full border-b border-slate-300 mt-5">
       <div className="flex flex-col">
-        <Voting postId={answer._id && answer._id} />
+        <Voting postId={answer._id && answer._id} ownerId={answer.owner._id} />
         {(question?.owner._id === user?._id || answer.accepted) && (
           <Accepted accepted={answer.accepted} id={answer._id} />
         )}

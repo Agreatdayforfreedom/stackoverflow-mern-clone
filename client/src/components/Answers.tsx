@@ -1,6 +1,6 @@
 import { nanoid } from "@reduxjs/toolkit";
 import React, { FormEvent, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   createAnswerThunk,
@@ -12,25 +12,28 @@ import { configAxios } from "../utils/configAxios";
 import Answer from "./Answer";
 import Blank from "./Blank";
 import Button from "./Button";
-import { Spinner } from "./Spinner";
+import Pagination from "./Pagination";
 
 const Answers = () => {
-  const { answers } = useAppSelector((state) => state.answers);
+  const { answers, loading } = useAppSelector((state) => state.answers);
   const dispatch = useAppDispatch();
   const params = useParams();
 
   useEffect(() => {
+    console.log(answers);
     if (params.id) {
       dispatch(getAnswersThunk(params.id));
     }
   }, []);
-  const length = answers.length;
+
+  if (loading) return <Blank />;
+  const total = answers.length;
   return (
     <div>
-      {length > 0 && (
+      {total > 0 && (
         <h1 className="font-semibold text-xl">
-          <span>{length} </span>
-          {length === 1 ? "Answer" : "Answers"}
+          <span>{total} </span>
+          {total === 1 ? "Answer" : "Answers"}
         </h1>
       )}
       {answers.map((answer) => (

@@ -5,6 +5,7 @@ import { authThunk, loginThunk } from "../features/auth/authApi";
 import { hideError, showError } from "../features/auth/authSlice";
 import { FaCubes } from "react-icons/fa";
 import Blank from "../components/Blank";
+import { clearState } from "../features/question/questionSlice";
 
 const Login = () => {
   const [findBy, setFindBy] = useState("");
@@ -27,6 +28,8 @@ const Login = () => {
     if ([password, findBy].includes("")) {
       return dispatch(showError("all fields are required"));
     }
+    //clear question state to prevent homepage flickering
+    dispatch(clearState());
 
     dispatch(loginThunk({ findBy, password }));
   };
