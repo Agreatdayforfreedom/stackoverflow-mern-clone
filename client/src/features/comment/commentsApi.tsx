@@ -16,7 +16,7 @@ export const createCommentThunk = createAsyncThunk(
   async ({ id, payload, config }: Payload, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:4000/api/comment/new/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/comment/new/${id}`,
         { content: payload && payload.content },
         config
       );
@@ -32,7 +32,7 @@ export const editCommentThunk = createAsyncThunk(
   async ({ id, payload, config }: Payload, { rejectWithValue }) => {
     try {
       const { data } = await axios.put(
-        `http://localhost:4000/api/comment/edit/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/comment/edit/${id}`,
         payload,
         config
       );
@@ -48,7 +48,7 @@ export const deleteCommentThunk = createAsyncThunk(
   async ({ id, config }: Payload, { rejectWithValue }) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:4000/api/comment/delete/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/comment/delete/${id}`,
         config
       );
       return data;

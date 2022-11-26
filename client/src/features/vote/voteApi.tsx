@@ -12,7 +12,9 @@ interface Payload {
 export const getVotesThunk = createAsyncThunk(
   "vote/getVotes",
   async (id: string) => {
-    const { data } = await axios(`http://localhost:4000/api/vote/${id}`);
+    const { data } = await axios(
+      `${import.meta.env.VITE_BACKEND_URL}/vote/${id}`
+    );
     return data;
   }
 );

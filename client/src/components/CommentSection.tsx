@@ -122,7 +122,7 @@ const CommentSection = ({ from, type }: PropsCS) => {
       };
 
       const { data } = await axios.post(
-        `http://localhost:4000/api/comment/new/${from._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/comment/new/${from._id}`,
         { content: payload.content },
         config
       );
