@@ -30,7 +30,7 @@ export const getQuestions = async (
 
     response.json({ questionsCount, questions });
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -41,7 +41,7 @@ export const getQuestion = async (request: Request, response: Response) => {
     }).populate("tags");
     return response.json(question);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -71,7 +71,7 @@ export const getQuestionsByTag = async (
       .populate("answerAccepted");
     return response.json({ questionsCount, questions });
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -89,7 +89,7 @@ export const getRelatedQuestions = async (
       .populate("votes");
     return response.json(questions);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -110,7 +110,7 @@ export const newQuestion = async (request: Request, response: Response) => {
     const _questionPopulated = await questionPopulated.populate("tags");
     return response.json(_questionPopulated);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -178,11 +178,11 @@ export const updateQuestion = async (request: Request, response: Response) => {
       )
         .populate("tags")
         .populate("owner");
-      console.log(updated);
+
       response.json(updated);
     }
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -207,6 +207,6 @@ export const deleteQuestion = async (request: Request, response: Response) => {
     ]);
     return response.json({ id: question._id });
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };

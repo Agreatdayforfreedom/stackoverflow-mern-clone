@@ -25,7 +25,9 @@ export const getUserThunk = createAsyncThunk(
   "user/getUser",
   async ({ id }: Payload, { rejectWithValue }) => {
     try {
-      const { data } = await axios(`http://localhost:4000/api/user/${id}`);
+      const { data } = await axios(
+        `${import.meta.env.VITE_BACKEND_URL}/user/${id}`
+      );
 
       return data;
     } catch (error) {

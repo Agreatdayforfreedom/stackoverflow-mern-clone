@@ -20,7 +20,6 @@ const Answers = () => {
   const params = useParams();
 
   useEffect(() => {
-    console.log(answers);
     if (params.id) {
       dispatch(getAnswersThunk(params.id));
     }

@@ -15,7 +15,7 @@ export const getAnswers = async (request: Request, response: Response) => {
 
     return response.json(answers);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -26,7 +26,7 @@ export const getAnswer = async (request: Request, response: Response) => {
     }).populate("owner");
     return response.json(answers);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -51,7 +51,7 @@ export const getRelatedAnswers = async (
 
     return response.json(answers);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -70,7 +70,7 @@ export const sendAnswer = async (request: Request, response: Response) => {
     const _answerCreated = await answerCreated.populate("owner", "-password");
     response.status(201).json(_answerCreated);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 
@@ -101,7 +101,7 @@ export const acceptAnswer = async (request: Request, response: Response) => {
 
     return response.sendStatus(204);
   } catch (error) {
-    console.log(error);
+    return HttpException("Internal Server Error", 500, response);
   }
 };
 

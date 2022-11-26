@@ -44,7 +44,9 @@ const Voting = ({ postId, ownerId }: Props) => {
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await axios(`http://localhost:4000/api/vote/${postId}`);
+      const { data } = await axios(
+        `${import.meta.env.VITE_BACKEND_URL}/vote/${postId}`
+      );
       if (data) {
         const votedType = data.votes.filter(
           (v: Vote) => v.voter === user?._id
