@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
-import { Answer, Tag } from "../interfaces/interfaces";
+import { Tag } from "../interfaces/interfaces";
 import AnswerModel from "../models/Answer.model";
 import CommentModel from "../models/Comment.model";
 import QuestionModel from "../models/Question.model";
@@ -178,9 +178,6 @@ export const updateQuestion = async (request: Request, response: Response) => {
       )
         .populate("tags")
         .populate("owner");
-
-      // const questionSaved = await question.save();
-      // const _questionPopulated = await updated.populate("tags");
       console.log(updated);
       response.json(updated);
     }
