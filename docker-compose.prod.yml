@@ -1,7 +1,7 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
     build:
       target: production
-    command: node build/index.js
+    command: npm run build
