@@ -28,7 +28,6 @@ export const voteThunk = createAsyncThunk(
       config
     );
 
-    console.log(data);
     return data;
   }
 );
