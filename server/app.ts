@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import authRouter from "./routes/auth.router";
 import dotenv from "dotenv";
 import questionRouter from "./routes/question.router";
@@ -15,6 +15,10 @@ dotenv.config();
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/healthz", (_request: Request, response: Response) => {
+  return response.sendStatus(200);
+});
 
 //routes
 app.use("/api/auth", authRouter);
